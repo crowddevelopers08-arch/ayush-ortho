@@ -1,0 +1,38 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  age           String?
+  areaOfPain    String?
+  treatmentPlan String?
+  city          String?
+  source        String?
+  formName      String?
+  status        LeadStatus @default(NEW)
+  telecrmSynced Boolean   @default(false)
+  telecrmId     String?
+  consent       Boolean   @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("leads")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  SCHEDULED
+  CONVERTED
+  LOST
+}
