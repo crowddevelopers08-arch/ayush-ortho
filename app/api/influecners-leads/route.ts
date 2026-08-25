@@ -84,10 +84,19 @@ async function sendToTeleCRM(lead: InfluencerLeadData) {
 }
 
 export async function POST(request: NextRequest) {
+  const contentType = request.headers.get("content-type") || "";
+  const isNativeForm = contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data");
+
   try {
-    const body = (await request.json()) as Partial<InfluencerLeadData>;
-    const name = body.name?.trim();
-    const phone = body.phone?.trim();
+    const body = isNativeForm
+      ? Object.fromEntries(await request.formData()) as Partial<Record<keyof InfluencerLeadData, FormDataEntryValue>>
+      : await request.json() as Partial<InfluencerLeadData>;
+    const readField = (key: keyof InfluencerLeadData) => {
+      const value = body[key];
+      return typeof value === "string" ? value.trim() : "";
+    };
+    const name = readField("name");
+    const phone = readField("phone");
 
     if (!name || !phone) {
       return NextResponse.json({ error: "Name and phone are required" }, { status: 400 });
@@ -96,10 +105,10 @@ export async function POST(request: NextRequest) {
     const leadData: InfluencerLeadData = {
       name,
       phone,
-      email: body.email?.trim() || "",
-      areaOfPain: body.areaOfPain?.trim() || "",
-      source: body.source?.trim() || "https://www.ayushortho.in/ayush-influecners",
-      consent: Boolean(body.consent),
+      email: readField("email"),
+      areaOfPain: readField("areaOfPain"),
+      source: readField("source") || request.headers.get("referer") || "https://www.ayushortho.in/ayush-influecners",
+      consent: body.consent === true || readField("consent") === "true",
     };
 
     const savedLead = await prisma.lead.create({
@@ -132,6 +141,10 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       telecrmError = error instanceof Error ? error.message : String(error);
       console.error("Influencer lead TeleCRM sync failed:", telecrmError);
+    }
+
+    if (isNativeForm) {
+      return NextResponse.redirect(new URL("/ayush-influecners/thank-you", request.url), 303);
     }
 
     return NextResponse.json({
