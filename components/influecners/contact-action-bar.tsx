@@ -20,13 +20,17 @@ export default function ContactActionBar() {
     setIsFormOpen(false);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const submitLead = async (form: HTMLFormElement) => {
+    if (isSubmitting || isSubmitted) return;
+
     setIsSubmitting(true);
     setSubmitError("");
-
-    const form = event.currentTarget;
     const formData = new FormData(form);
+
+    console.info("[InfluencerLead] submit started", {
+      formName: "influecners-leads",
+      endpoint: "/api/influecners-leads",
+    });
 
     let submittedSuccessfully = false;
 
@@ -49,6 +53,7 @@ export default function ContactActionBar() {
         throw new Error(result?.error || "Unable to submit your request.");
       }
 
+      console.info("[InfluencerLead] submit succeeded", result);
       submittedSuccessfully = true;
       setIsSubmitted(true);
       router.push("/ayush-influecners/thank-you");
@@ -58,10 +63,16 @@ export default function ContactActionBar() {
         }
       }, 2000);
     } catch (error) {
+      console.error("[InfluencerLead] submit failed", error);
       setSubmitError(error instanceof Error ? error.message : "Unable to submit your request. Please try again.");
     } finally {
       if (!submittedSuccessfully) setIsSubmitting(false);
     }
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void submitLead(event.currentTarget);
   };
 
   useEffect(() => {
@@ -127,7 +138,7 @@ export default function ContactActionBar() {
     </section>
 
     {isFormOpen && (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 py-6 font-[var(--font-geist)] backdrop-blur-[3px]" role="dialog" aria-modal="true" aria-labelledby="contact-form-title" onMouseDown={(event) => { if (event.target === event.currentTarget) closeForm(); }}>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 py-6 font-[var(--font-geist)] backdrop-blur-[3px]" role="dialog" aria-modal="true" aria-labelledby="contact-form-title">
         <div className="relative w-full max-w-[480px] rounded-[26px] bg-white p-6 shadow-[0_24px_70px_rgba(0,0,0,.28)] sm:p-8">
           <button type="button" aria-label="Close form" onClick={closeForm} disabled={isSubmitting} className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-[#f4f6f5] text-[#33433c] transition hover:bg-[#e9eeeb] disabled:cursor-not-allowed disabled:opacity-50"><X className="h-5 w-5" /></button>
           <div className="pr-10">
@@ -145,7 +156,7 @@ export default function ContactActionBar() {
               <p className="mt-2 text-sm leading-6 text-[#6b7582]">Please wait while we take you to the confirmation page.</p>
             </div>
           ) : (
-          <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+          <form className="mt-6 grid gap-4" onSubmit={handleSubmit} data-form-version="influecners-leads-v2">
             <label className="grid gap-1.5 text-xs font-semibold text-[#33423b]">Name
               <input name="name" type="text" required placeholder="Enter your name" className="h-12 rounded-xl border border-[#dfe6e2] bg-white px-4 text-sm font-normal outline-none transition placeholder:text-[#a1aaa5] focus:border-[#e13e20] focus:ring-2 focus:ring-[#e13e20]/10" />
             </label>
@@ -162,7 +173,7 @@ export default function ContactActionBar() {
               </select>
             </label>
             {submitError && <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-xs leading-5 text-red-700">{submitError}</p>}
-            <button type="submit" disabled={isSubmitting} className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#e13e20,#b92f18)] px-6 text-sm font-semibold text-white shadow-[0_7px_18px_rgba(225,62,32,.22)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-65">
+            <button type="button" onClick={(event) => { const form = event.currentTarget.form; if (form?.reportValidity()) void submitLead(form); }} disabled={isSubmitting} className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#e13e20,#b92f18)] px-6 text-sm font-semibold text-white shadow-[0_7px_18px_rgba(225,62,32,.22)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-65">
               {isSubmitting ? "Submitting..." : "Submit Request"} {!isSubmitting && <Send className="h-4 w-4" />}
             </button>
           </form>
