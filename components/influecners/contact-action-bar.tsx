@@ -1,18 +1,22 @@
 "use client";
 
-import { CalendarDays, PhoneCall, Send, X } from "lucide-react";
+import { CalendarDays, CheckCircle2, PhoneCall, Send, X } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ContactActionBar() {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   const closeForm = () => {
     if (isSubmitting) return;
     setSubmitError("");
+    setIsSubmitted(false);
     setIsFormOpen(false);
   };
 
@@ -23,6 +27,8 @@ export default function ContactActionBar() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+
+    let submittedSuccessfully = false;
 
     try {
       const response = await fetch("/api/influecners-leads", {
@@ -43,15 +49,24 @@ export default function ContactActionBar() {
         throw new Error(result?.error || "Unable to submit your request.");
       }
 
-      form.reset();
-      setIsFormOpen(false);
-      window.location.assign("/ayush-influecners/thank-you");
+      submittedSuccessfully = true;
+      setIsSubmitted(true);
+      router.push("/ayush-influecners/thank-you");
+      window.setTimeout(() => {
+        if (window.location.pathname !== "/ayush-influecners/thank-you") {
+          window.location.assign("/ayush-influecners/thank-you");
+        }
+      }, 2000);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Unable to submit your request. Please try again.");
     } finally {
-      setIsSubmitting(false);
+      if (!submittedSuccessfully) setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    router.prefetch("/ayush-influecners/thank-you");
+  }, [router]);
 
   useEffect(() => {
     const updateVisibility = () => {
@@ -121,6 +136,15 @@ export default function ContactActionBar() {
             <p className="mt-2 text-sm leading-6 text-[#6b7582]">Share your details and our team will contact you shortly.</p>
           </div>
 
+          {isSubmitted ? (
+            <div className="mt-7 flex min-h-[260px] flex-col items-center justify-center rounded-[20px] bg-[#fff5f2] px-6 text-center" role="status">
+              <span className="grid h-14 w-14 place-items-center rounded-full bg-[#e13e20] text-white shadow-[0_8px_22px_rgba(225,62,32,.22)]">
+                <CheckCircle2 className="h-7 w-7" />
+              </span>
+              <h3 className="mt-4 text-xl font-semibold text-[#142544]">Request Submitted</h3>
+              <p className="mt-2 text-sm leading-6 text-[#6b7582]">Please wait while we take you to the confirmation page.</p>
+            </div>
+          ) : (
           <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
             <label className="grid gap-1.5 text-xs font-semibold text-[#33423b]">Name
               <input name="name" type="text" required placeholder="Enter your name" className="h-12 rounded-xl border border-[#dfe6e2] bg-white px-4 text-sm font-normal outline-none transition placeholder:text-[#a1aaa5] focus:border-[#e13e20] focus:ring-2 focus:ring-[#e13e20]/10" />
@@ -142,6 +166,7 @@ export default function ContactActionBar() {
               {isSubmitting ? "Submitting..." : "Submit Request"} {!isSubmitting && <Send className="h-4 w-4" />}
             </button>
           </form>
+          )}
         </div>
       </div>
     )}
