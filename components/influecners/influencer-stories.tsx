@@ -35,7 +35,7 @@ export default function InfluencerStories() {
   const move = (direction: number) => carouselRef.current?.scrollBy({ left: direction * 230, behavior: "smooth" });
 
   return (
-    <section className="bg-white px-4 pb-12 pt-0 font-[var(--font-geist)] text-black sm:px-6 lg:px-8">
+    <section id="real-stories" className="bg-white px-4 max-sm:pb-5 pb-12 pt-0 font-[var(--font-geist)] text-black sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1500px]">
         {/* <div className="grid min-h-[112px] grid-cols-2 overflow-hidden rounded-t-[22px] bg-[linear-gradient(110deg,#f5f7f5,#fafbf9)] px-4 py-5 sm:grid-cols-3 lg:grid-cols-5 lg:px-8 lg:py-0">
           {trustItems.map(({ value, label, icon: Icon }, index) => (
@@ -49,13 +49,13 @@ export default function InfluencerStories() {
           ))}
         </div> */}
 
-        <div className="px-3 pt-11 sm:px-7 lg:pt-12">
+        <div className="px-3 pt-5 sm:px-7 lg:pt-12">
           <div className="mb-6 flex flex-col gap-4 sm:mb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
             <div className="flex flex-col gap-1.5">
               <h2 className="text-lg font-semibold tracking-[-.3px] sm:text-xl lg:text-2xl">REAL STORIES. REAL RELIEF.</h2>
               <p className="text-[13px] leading-snug tracking-[-.1px] text-black/70 sm:text-base lg:text-lg">See how patients have shared their experiences and recovery journeys with Ayush Ortho.</p>
             </div>
-            <a href="#all-stories" className={`${heroButtonStyle} hidden sm:inline-flex`}><span className="relative z-10">View All Stories</span><ArrowRight className="relative z-10 h-4 w-4" /></a>
+            <a href="#all-stories" className={`${heroButtonStyle} !hidden sm:!inline-flex`}><span className="relative z-10">View All Stories</span><ArrowRight className="relative z-10 h-4 w-4" /></a>
           </div>
 
           <div className="relative">
@@ -75,7 +75,7 @@ export default function InfluencerStories() {
             <button type="button" aria-label="Next stories" onClick={() => move(1)} className="absolute right-1 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[#e8ece9] bg-white/95 text-[#5b8977] shadow-md backdrop-blur-sm transition hover:scale-105 sm:right-0 sm:translate-x-1/2 lg:h-11 lg:w-11"><ArrowRight className="h-4 w-4 lg:h-5 lg:w-5" /></button>
           </div>
 
-          <a href="#all-stories" className={`${heroButtonStyle} mt-6 flex w-full sm:hidden`}><span className="relative z-10">View All Stories</span><ArrowRight className="relative z-10 h-4 w-4" /></a>
+          <a href="#all-stories" className={`${heroButtonStyle} mt-6 w-full sm:!hidden`}><span className="relative z-10">View All Stories</span><ArrowRight className="relative z-10 h-4 w-4" /></a>
         </div>
       </div>
     </section>
