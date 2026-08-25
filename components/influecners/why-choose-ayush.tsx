@@ -2,27 +2,27 @@ const reasons = [
   {
     title: <>Advanced<br />Orthopedic Care</>,
     description: <>A comprehensive approach focused on understanding and managing your pain.</>,
-    iconPath: "/why-icon-1.png",
+    iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655762/why-icon-1.png",
   },
   {
     title: <>Personalised<br />Treatment Plans</>,
     description: <>Every patient is different. Your treatment plan is based on your individual condition and requirements.</>,
-    iconPath: "/why-icon-2.png",
+    iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655763/why-icon-2.png",
   },
   {
     title: <>Modern<br />Treatment Approach</>,
     description: <>We combine clinical assessment with appropriate therapy and rehabilitation techniques.</>,
-    iconPath: "/why-icon-3.png",
+    iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655763/why-icon-3.png",
   },
   {
     title: <>Holistic<br />Approach</>,
     description: <>Our focus goes beyond temporary relief by understanding the factors contributing to your discomfort.</>,
-    iconPath: "/why-icon-4.png",
+    iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655763/why-icon-4.png",
   },
   {
     title: <>Safe &amp; Patient-Focused<br />Care</>,
     description: <>Your treatment journey is guided by trained professionals with a focus on comfort and appropriate care.</>,
-    iconPath: "/why-icon-5.png",
+    iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655763/why-icon-5.png",
   },
 ];
 

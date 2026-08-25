@@ -4,19 +4,19 @@ import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 const painAreas = [
-  { label: "Knee Pain", iconPath: "/icons-1.png" },
-  { label: "Back Pain", iconPath: "/icons-2.png" },
-  { label: "Neck Pain", iconPath: "/icons-3.png" },
-  { label: "Shoulder Pain", iconPath: "/icons-4.png" },
-  { label: "Hip Pain", iconPath: "/icons-5.png" },
-  { label: "Ankle Pain", iconPath: "/icons-6.png" },
+  { label: "Knee Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655760/icons-1.png" },
+  { label: "Back Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655760/icons-2.png" },
+  { label: "Neck Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655760/icons-3.png" },
+  { label: "Shoulder Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655760/icons-4.png" },
+  { label: "Hip Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655760/icons-5.png" },
+  { label: "Ankle Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/icons-6.png" },
 ];
 
 const benefits = [
-  { title: "Personalized", subtitle: "Assessment", iconPath: "/p-icons-1.png" },
-  { title: "Advanced", subtitle: "Therapy", iconPath: "/p-icons-2.png" },
-  { title: "Surgery-Free", subtitle: "Treatment", iconPath: "/p-icons-3.png" },
-  { title: "Faster", subtitle: "Recovery", iconPath: "/p-icons-4.png" },
+  { title: "Personalized", subtitle: "Assessment", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655760/p-icons-1.png" },
+  { title: "Advanced", subtitle: "Therapy", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/p-icons-2.png" },
+  { title: "Surgery-Free", subtitle: "Treatment", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/p-icons-3.png" },
+  { title: "Faster", subtitle: "Recovery", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655762/p-icons-4.png" },
 ];
 
 export default function PainReliefSelector() {
@@ -31,7 +31,7 @@ export default function PainReliefSelector() {
           <a href="#treatments" className="relative z-10 mt-7 hidden h-11 items-center gap-5 rounded-full border-2 border-[#e13e20] px-5 text-xs font-semibold text-[#e13e20] no-underline shadow-sm lg:inline-flex">Explore Treatments <ArrowRight className="h-4 w-4" /></a>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[340px] items-center justify-center lg:inset-y-4 lg:right-0 lg:left-auto lg:h-auto lg:w-[55%]">
             <span className="absolute bottom-[12%] h-24 w-24 rounded-full border border-[#dceadd] shadow-[0_0_0_16px_rgba(224,238,226,.32),0_0_0_32px_rgba(224,238,226,.18)] lg:h-28 lg:w-28" />
-            <img src="/pain-body-map.png" alt="Rear anatomical body showing common pain locations" className="relative z-1 h-full w-full object-contain lg:h-[94%]" />
+            <img src="https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655762/pain-body-map.png" alt="Rear anatomical body showing common pain locations" className="relative z-1 h-full w-full object-contain lg:h-[94%]" />
           </div>
         </div>
 
@@ -48,9 +48,9 @@ export default function PainReliefSelector() {
 
         <div className="flex items-center justify-center p-4 sm:p-6 lg:p-7">
           <div className="relative aspect-[1.04] w-full max-w-[390px] overflow-hidden rounded-[20px] bg-[#ddd] shadow-lg">
-            <img src="/knee-pain-closeup.png" alt={`${activePain} treatment focus`} className="h-full w-full object-cover" />
+            <img src="https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655762/knee-pain-closeup.png" alt={`${activePain} treatment focus`} className="h-full w-full object-cover" />
             <div className="absolute inset-x-0 bottom-4 flex justify-center gap-3">
-              {["25% 45%", "63% 42%", "79% 45%"].map((position, index) => <span key={position} className="h-[58px] w-[58px] overflow-hidden rounded-full border-2 border-white bg-white shadow-md sm:h-[72px] sm:w-[72px]"><img src="/ayush-influencer-treatment.png" alt={`Treatment preview ${index + 1}`} className="h-full w-full object-cover" style={{ objectPosition: position }} /></span>)}
+              {["25% 45%", "63% 42%", "79% 45%"].map((position, index) => <span key={position} className="h-[58px] w-[58px] overflow-hidden rounded-full border-2 border-white bg-white shadow-md sm:h-[72px] sm:w-[72px]"><img src="https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/ayush-influencer-treatment.png" alt={`Treatment preview ${index + 1}`} className="h-full w-full object-cover" style={{ objectPosition: position }} /></span>)}
             </div>
           </div>
         </div>

@@ -1,12 +1,12 @@
 import { ArrowRight } from "lucide-react";
 
 const journeyPoints = [
-  { label: "Persistent Knee Pain", iconPath: "/pain-icon-1.png" },
-  { label: "Back and Spine-Related Pain", iconPath: "/pain-icon-2.png" },
-  { label: "Neck and Shoulder Pain", iconPath: "/pain-icon-3.png" },
-  { label: "Joint Stiffness", iconPath: "/pain-icon-4.png" },
-  { label: "Mobility Concerns", iconPath: "/pain-icon-5.png" },
-  { label: "Sports and Activity-Related Discomfort", iconPath: "/pain-icon-6.png" },
+  { label: "Persistent Knee Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/pain-icon-1.png" },
+  { label: "Back and Spine-Related Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655762/pain-icon-2.png" },
+  { label: "Neck and Shoulder Pain", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655762/pain-icon-3.png" },
+  { label: "Joint Stiffness", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655762/pain-icon-4.png" },
+  { label: "Mobility Concerns", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655763/pain-icon-5.png" },
+  { label: "Sports and Activity-Related Discomfort", iconPath: "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655760/pain-icon-6.png" },
 ];
 
 export default function SuccessJourney() {
@@ -31,7 +31,7 @@ export default function SuccessJourney() {
           </p>
 
           <div className="mt-8 flex w-full justify-center lg:hidden">
-            <img src="/images-ortho-1.jpg" alt="Common pain points across the body" className="aspect-square w-full max-w-[420px] rounded-[22px] object-cover " />
+            <img src="https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/images-ortho-1.jpg" alt="Common pain points across the body" className="aspect-square w-full max-w-[420px] rounded-[22px] object-cover " />
           </div>
 
           <div className="mt-12 max-sm:mt-5 grid max-w-[900px] gap-x-12 gap-y-4 sm:grid-cols-2 lg:mt-7">
@@ -51,7 +51,7 @@ export default function SuccessJourney() {
         </div>
 
         <div className="hidden items-center justify-center lg:flex lg:justify-end">
-          <img src="/images-ortho-1.jpg" alt="Common pain points across the body" className="w-full max-w-[530px] rounded-[26px] object-cover opacity-85 shadow-[0_16px_40px_rgba(18,36,69,.12)]" />
+          <img src="https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/images-ortho-1.jpg" alt="Common pain points across the body" className="w-full max-w-[530px] rounded-[26px] object-cover opacity-85 shadow-[0_16px_40px_rgba(18,36,69,.12)]" />
         </div>
       </div>
     </section>

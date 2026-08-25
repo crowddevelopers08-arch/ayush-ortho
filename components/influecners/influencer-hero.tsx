@@ -24,6 +24,8 @@ const treatments = [
   "Joint Pain",
 ];
 const stories = ["@sri_deepthi", "@fitness_chandru", "@foodies_divya"];
+const influencerTreatmentImage =
+  "https://res.cloudinary.com/x6ec5hqm/image/upload/v1787655761/ayush-influencer-treatment.png";
 const greenButton =
   "group relative inline-flex h-[46px] min-w-[150px] items-center justify-center gap-2 overflow-hidden rounded-full border-0 bg-[#e13e20] px-5 text-center font-['Rubik',sans-serif] text-sm font-normal whitespace-nowrap text-white no-underline transition-colors duration-200 before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-1/2 before:-translate-x-[220%] before:-skew-x-[20deg] before:bg-gradient-to-r before:from-white/70 before:via-white/20 before:to-transparent before:transition-transform before:duration-1000 hover:text-[#ffccbc] hover:before:translate-x-[350%] focus:text-[#ffccbc] max-[480px]:min-w-[140px] max-[480px]:px-4 max-[480px]:text-sm max-[360px]:min-w-[120px] max-[360px]:gap-1.5 max-[360px]:px-3 max-[360px]:text-xs";
 
@@ -137,8 +139,8 @@ export default function InfluencerHero() {
               {[38, 49, 60, 71].map((p, i) => (
                 <span
                   key={p}
-                  className={`${i ? "-ml-2" : ""} h-6 w-6 rounded-full border-2 border-white bg-[url('/ayush-influencer-treatment.png')] bg-[length:360%]`}
-                  style={{ backgroundPosition: `${p}% 34%` }}
+                  className={`${i ? "-ml-2" : ""} h-6 w-6 rounded-full border-2 border-white bg-[length:360%]`}
+                  style={{ backgroundImage: `url(${influencerTreatmentImage})`, backgroundPosition: `${p}% 34%` }}
                 />
               ))}
             </div>
@@ -257,12 +259,12 @@ export default function InfluencerHero() {
         <aside className="absolute right-[3%] top-[4%] z-7 w-[332px] max-[1100px]:right-[2%] max-sm:relative max-sm:right-auto max-sm:top-auto max-sm:mt-7 max-sm:w-full">
           <div className="relative h-[480px] overflow-hidden rounded-2xl bg-[#222] shadow-2xl after:absolute after:inset-0 after:bg-[linear-gradient(#0009,transparent_21%,transparent_63%,#0007)] max-sm:h-[500px]">
             <img
-              src="/ayush-influencer-treatment.png"
+              src={influencerTreatmentImage}
               alt="Ayush Ortho therapist helping a patient"
               className="h-full w-full object-cover"
             />
             <div className="absolute top-3 right-3 left-3 z-2 flex items-center text-[10px] text-white">
-              <span className="mr-2 h-8 w-8 rounded-full border-2 border-white bg-[url('/ayush-influencer-treatment.png')] bg-cover" />
+              <span className="mr-2 h-8 w-8 rounded-full border-2 border-white bg-cover" style={{ backgroundImage: `url(${influencerTreatmentImage})` }} />
               <div className="flex flex-col">
                 <b>iamkarthickk</b>
                 <small>312K Followers</small>
@@ -295,8 +297,8 @@ export default function InfluencerHero() {
                 className="overflow-hidden rounded-xl bg-white text-[7px] shadow-lg"
               >
                 <div
-                  className="h-[72px] bg-[url('/ayush-influencer-treatment.png')] bg-[length:320%]"
-                  style={{ backgroundPosition: `${i * 31 + 24}% 37%` }}
+                  className="h-[72px] bg-[length:320%]"
+                  style={{ backgroundImage: `url(${influencerTreatmentImage})`, backgroundPosition: `${i * 31 + 24}% 37%` }}
                 />
                 <b className="block px-2 pt-1">{x}</b>
                 <small className="px-2 text-black/80">
