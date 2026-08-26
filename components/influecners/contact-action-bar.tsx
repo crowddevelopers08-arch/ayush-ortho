@@ -3,13 +3,56 @@
 import { CalendarDays, PhoneCall, Send, X } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ContactActionBar() {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const closeForm = () => {
     setIsFormOpen(false);
+    setSubmitError("");
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("/api/influecners-leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          phone: formData.get("phone"),
+          email: formData.get("email"),
+          areaOfPain: formData.get("areaOfPain"),
+          consent: true,
+          source: window.location.href,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to submit form");
+      }
+
+      form.reset();
+      setIsFormOpen(false);
+      router.push("/ayush-influecners/thank-you");
+    } catch (error) {
+      console.error("Influencer lead submission failed:", error);
+      setSubmitError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -80,8 +123,10 @@ export default function ContactActionBar() {
             <p className="mt-2 text-sm leading-6 text-[#6b7582]">Share your details and our team will contact you shortly.</p>
           </div>
 
-          <form action="/api/influecners-leads" method="post" className="mt-6 grid gap-4" data-form-version="influecners-leads-v3-native">
-            <input type="hidden" name="consent" value="true" />
+          <form onSubmit={handleSubmit} className="mt-6 grid gap-4" data-form-version="influecners-leads-v4-fetch">
+            {submitError && (
+              <p role="alert" className="rounded-lg bg-[#fff0ec] px-3 py-2 text-xs font-medium text-[#e13e20]">{submitError}</p>
+            )}
             <label className="grid gap-1.5 text-xs font-semibold text-[#33423b]">Name
               <input name="name" type="text" required placeholder="Enter your name" className="h-12 rounded-xl border border-[#dfe6e2] bg-white px-4 text-sm font-normal outline-none transition placeholder:text-[#a1aaa5] focus:border-[#e13e20] focus:ring-2 focus:ring-[#e13e20]/10" />
             </label>
@@ -97,8 +142,8 @@ export default function ContactActionBar() {
                 <option>Knee Pain</option><option>Back Pain</option><option>Neck Pain</option><option>Shoulder Pain</option><option>Hip Pain</option><option>Ankle Pain</option><option>Joint Stiffness</option><option>Sports Injury</option><option>Other</option>
               </select>
             </label>
-            <button type="submit" className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#e13e20,#b92f18)] px-6 text-sm font-semibold text-white shadow-[0_7px_18px_rgba(225,62,32,.22)] transition hover:brightness-105">
-              Submit Request <Send className="h-4 w-4" />
+            <button type="submit" disabled={isSubmitting} className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#e13e20,#b92f18)] px-6 text-sm font-semibold text-white shadow-[0_7px_18px_rgba(225,62,32,.22)] transition hover:brightness-105 disabled:opacity-60">
+              {isSubmitting ? "Submitting..." : "Submit Request"} <Send className="h-4 w-4" />
             </button>
           </form>
         </div>
