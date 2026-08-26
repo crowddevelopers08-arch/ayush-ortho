@@ -211,7 +211,7 @@ const Commonmap: React.FC = () => {
         </div>
       )}
 
-      {/* Footer */}
+      {/* Footers */}
       <footer className="w-full flex flex-col md:flex-row items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-t border-gray-200 text-sm font-medium text-gray-600 bg-white">
         <div className="mb-2 md:mt-0 text-center md:text-left">
           © 2025 Ayush Ortho | All Right Reserved
