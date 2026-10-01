@@ -57,18 +57,19 @@ export default function VideoSection() {
   const stopPlayback = useCallback(() => setPlayingId(null), []);
 
   return (
-    <section className="bg-[#0d1a33] px-4 py-14 text-white sm:px-6 sm:py-16 lg:py-24">
+    <section className="bg-[#0d1a33] px-4 py-9 text-white sm:px-6 sm:py-16 lg:py-24">
       <div className="mx-auto max-w-[1240px]">
         <div className="text-center">
           <span className="text-[13px] font-semibold tracking-[1.5px] text-[#ff8a70] uppercase">Patient Videos</span>
           <h2 className="mt-3 text-[26px] leading-tight font-semibold sm:text-[34px] lg:text-[40px]">Hear From Our Patients</h2>
         </div>
 
-        <div className="mt-10 sm:mt-12">
+        <div className="mt-6 sm:mt-12">
           <Carousel
             label="Patient videos"
             tone="dark"
             onSlideChange={stopPlayback}
+            paused={playingId !== null}
             slides={videoIds.map((id, i) => (
               <LiteYouTube key={id} id={id} index={i} playing={playingId === id} onPlay={() => setPlayingId(id)} />
             ))}

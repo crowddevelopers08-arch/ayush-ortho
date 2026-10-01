@@ -66,7 +66,7 @@ function ReviewCard({ url, name, text }: (typeof googleReviews)[number]) {
 
 export default function TestimonialSection() {
   return (
-    <section className="bg-[#f7f8fa] px-4 py-14 sm:px-6 sm:py-16 lg:py-20">
+    <section className="bg-[#f7f8fa] px-4 py-9 sm:px-6 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1240px]">
         <div className="flex flex-col items-center text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#142544] shadow-sm ring-1 ring-[#e3e7ee]">
@@ -75,7 +75,7 @@ export default function TestimonialSection() {
           <h2 className="mt-4 text-[26px] leading-tight font-semibold text-[#142544] sm:text-[34px] lg:text-[38px]">What Our Patients Say</h2>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-6 sm:mt-10">
           <Carousel
             label="Patient reviews"
             slides={googleReviews.map((review) => (

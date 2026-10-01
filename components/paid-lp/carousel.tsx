@@ -11,6 +11,9 @@ type CarouselProps = {
   slideClassName?: string;
   tone?: "light" | "dark";
   onSlideChange?: () => void;
+  autoplayDelay?: number;
+  // Lets a parent hold autoplay, e.g. while a video in a slide is playing.
+  paused?: boolean;
 };
 
 export default function Carousel({
@@ -19,10 +22,24 @@ export default function Carousel({
   slideClassName = "basis-full sm:basis-1/2 lg:basis-1/3",
   tone = "light",
   onSlideChange,
+  autoplayDelay = 4000,
+  paused = false,
 }: CarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", loop: true });
   const [selected, setSelected] = useState(0);
   const [snapCount, setSnapCount] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [interaction, setInteraction] = useState(0);
+
+  // Autoplay: one slide every `autoplayDelay`. The timer restarts whenever the slide
+  // changes or the visitor touches the carousel, so manual swipes get a full interval.
+  useEffect(() => {
+    if (!emblaApi || snapCount < 2 || paused || hovered || focused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = setTimeout(() => emblaApi.scrollNext(), autoplayDelay);
+    return () => clearTimeout(timer);
+  }, [emblaApi, snapCount, paused, hovered, focused, selected, interaction, autoplayDelay]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -51,7 +68,18 @@ export default function Carousel({
   }`;
 
   return (
-    <div role="region" aria-roledescription="carousel" aria-label={label}>
+    <div
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={label}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={(e) => setFocused(e.target.matches(":focus-visible"))}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
+      }}
+      onPointerDown={() => setInteraction((n) => n + 1)}
+    >
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="-ml-4 flex touch-pan-y sm:-ml-5">
           {slides.map((slide, i) => (
@@ -69,7 +97,7 @@ export default function Carousel({
       </div>
 
       {snapCount > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-4 sm:gap-5">
+        <div className="mt-5 flex items-center justify-center gap-4 sm:mt-8 sm:gap-5">
           <button type="button" onClick={() => emblaApi?.scrollPrev()} aria-label="Previous slide" className={arrowButton}>
             <ChevronLeft className="h-5 w-5" />
           </button>

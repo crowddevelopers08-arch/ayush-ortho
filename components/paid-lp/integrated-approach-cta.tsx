@@ -3,12 +3,12 @@ import { BOOKING_ANCHOR, integratedApproach } from "./data";
 
 export default function IntegratedApproachCta() {
   return (
-    <section className="bg-white px-4 py-6 sm:px-6">
-      <div className="relative mx-auto max-w-[1240px] overflow-hidden rounded-[22px] bg-[linear-gradient(120deg,#e13e20_0%,#c9361c_55%,#9e2a15_100%)] px-4 py-8 text-white sm:rounded-[28px] sm:px-10 sm:py-12 lg:px-12">
+    <section className="bg-white px-4 py-3 sm:px-6 sm:py-6">
+      <div className="relative mx-auto max-w-[1240px] overflow-hidden rounded-[22px] bg-[linear-gradient(120deg,#e13e20_0%,#c9361c_55%,#9e2a15_100%)] px-4 py-6 text-white sm:rounded-[28px] sm:px-10 sm:py-12 lg:px-12">
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full border-[40px] border-white/10" />
         <div className="pointer-events-none absolute -bottom-32 left-[38%] h-64 w-64 rounded-full border-[36px] border-white/5" />
 
-        <div className="relative flex flex-col items-center gap-7 text-center lg:flex-row lg:justify-between lg:gap-10 lg:text-left">
+        <div className="relative flex flex-col items-center gap-5 text-center sm:gap-7 lg:flex-row lg:justify-between lg:gap-10 lg:text-left">
           <div className="min-w-0">
             <p className="text-xs font-semibold tracking-[1.2px] text-white/80 uppercase sm:text-sm">Integrated Treatment Approach</p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-2 sm:gap-2 lg:justify-start">

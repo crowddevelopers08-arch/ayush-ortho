@@ -102,7 +102,7 @@ export function Backfooter() {
           <p className="text-gray-400 max-[470px]:text-[11px] max-[470px]:mb-[50px] max-[426px]:mb-[0px]">© 2025 Ayush Ortho. All rights reserved.</p>
         </div>
         <div className="border-t border-[#e13e20]/20 mt-12 pt-8 max-[426px]:pt-4 max-[426px]:mt-4 text-center">
-          <p className="text-gray-400 max-[470px]:text-[11px] max-[426px]:mb-[50px]"><a href="/privacy-policy-backpain"><span className="text-gray-400 max-[426px]:mb-[50px]">Privacy policy</span></a></p>
+          <p className="text-gray-400 max-[470px]:text-[11px] max-[426px]:mb-[50px]"><a href="/privacy-policy-backpain"><span className="text-gray-400 max-[426px]:mb-[50px]">Privacy policy</span></a><span className="mx-2 text-gray-600">|</span><a href="/terms-and-conditions" className="hover:text-gray-200">Terms &amp; Conditions</a><span className="mx-2 text-gray-600">|</span><a href="/cancellation-refund-policy" className="hover:text-gray-200">Cancellation &amp; Refund Policy</a></p>
         </div>
         </div>
       </div>

@@ -4,13 +4,13 @@ import { LOGO_URL, branches, toTelHref } from "./data";
 export default function BranchesFooter() {
   return (
     <footer className="bg-[#0d1a33] text-white">
-      <div className="mx-auto max-w-[1240px] px-4 pt-14 pb-10 sm:px-6 sm:pt-16 lg:pt-20">
+      <div className="mx-auto max-w-[1240px] px-4 pt-9 pb-8 sm:px-6 sm:pt-16 sm:pb-10 lg:pt-20">
         <div className="text-center">
           <span className="text-[13px] font-semibold tracking-[1.5px] text-[#ff8a70] uppercase">Visit Us</span>
           <h2 className="mt-3 text-[26px] leading-tight font-semibold sm:text-[34px] lg:text-[40px]">Our Branches Across Tamilnadu</h2>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
+        <div className="mt-6 grid gap-3 sm:mt-12 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
           {branches.map(({ name, timings, address, phone }) => (
             <article
               key={name}
@@ -59,9 +59,17 @@ export default function BranchesFooter() {
             <img src={LOGO_URL} alt="Ayush Ortho" className="h-8 w-auto" />
           </span>
           <p>© {new Date().getFullYear()} Ayush Ortho | All Rights Reserved</p>
-          <a href="/privacy-policy" className="font-medium text-white/80 hover:text-white">
-            Privacy Policy
-          </a>
+          <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-medium text-white/80">
+            <a href="/privacy-policy" className="hover:text-white">
+              Privacy Policy
+            </a>
+            <a href="/terms-and-conditions" className="hover:text-white">
+              Terms &amp; Conditions
+            </a>
+            <a href="/cancellation-refund-policy" className="hover:text-white">
+              Cancellation &amp; Refund Policy
+            </a>
+          </nav>
         </div>
       </div>
     </footer>

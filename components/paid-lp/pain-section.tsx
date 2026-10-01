@@ -4,16 +4,16 @@ import { BOOKING_ANCHOR, painCategories } from "./data";
 
 export default function PainSection() {
   return (
-    <section className="bg-white px-4 py-14 sm:px-6 sm:py-16 lg:py-24">
+    <section className="bg-white px-4 py-9 sm:px-6 sm:py-16 lg:py-24">
       <div className="mx-auto max-w-[1240px]">
-        <div className="mx-auto max-w-[680px] text-center">
+        <div className="mx-auto max-w-[780px] text-center">
           <span className="text-[13px] font-semibold tracking-[1.5px] text-[#e13e20] uppercase">Conditions We Treat</span>
           <h2 className="mt-3 text-[22px] leading-[1.3] font-semibold text-[#142544] sm:text-[30px] lg:text-[36px]">
             Explore personalised integrated care for a range of joint, muscle and mobility concerns.
           </h2>
         </div>
 
-        <div className="mt-10 sm:mt-12">
+        <div className="mt-6 sm:mt-12">
           <Carousel
             label="Conditions we treat"
             slides={painCategories.map(({ title, image, points }) => (

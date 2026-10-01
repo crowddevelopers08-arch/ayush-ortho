@@ -216,13 +216,10 @@ const Commonmap: React.FC = () => {
         <div className="mb-2 md:mt-0 text-center md:text-left">
           © 2025 Ayush Ortho | All Right Reserved
         </div>
-        <div className="text-center md:text-right">
-          <a
-            href="/ayush-influecners/privacy-policy"
-            className="text-gray-700 cursor-pointer hover:text-gray-900 transition-colors duration-200 font-semibold"
-          >
-            Privacy Policy
-          </a>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 md:justify-end">
+          <a href="/ayush-influecners/privacy-policy" className="text-gray-700 cursor-pointer hover:text-gray-900 transition-colors duration-200 font-semibold">Privacy Policy</a>
+          <a href="/terms-and-conditions" className="text-gray-700 cursor-pointer hover:text-gray-900 transition-colors duration-200 font-semibold">Terms &amp; Conditions</a>
+          <a href="/cancellation-refund-policy" className="text-gray-700 cursor-pointer hover:text-gray-900 transition-colors duration-200 font-semibold">Cancellation &amp; Refund Policy</a>
         </div>
       </footer>
     </>

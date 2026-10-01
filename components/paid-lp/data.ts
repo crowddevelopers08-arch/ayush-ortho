@@ -5,11 +5,12 @@ export const LOGO_URL = "https://ik.imagekit.io/wwdlbhsjw/public/ayushhhhh.png";
 // Treatment photos rotated in the hero arch. `position` keeps the people in frame
 // when the wide photo is cropped to the tall arch.
 export const heroImages = [
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/main2.jpg?tr=w-900", alt: "Therapist adjusting a patient's back", position: "62% center" },
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/main4.jpg?tr=w-900", alt: "Therapist treating a patient lying on a bed", position: "48% center" },
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/scroll5.jpg?tr=w-900", alt: "Therapist's hands treating a patient's back", position: "50% center" },
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/main3.jpg?tr=w-900", alt: "Doctor reviewing an x-ray with a patient", position: "72% center" },
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/main1.jpg?tr=w-900", alt: "Doctor consulting with a patient", position: "30% center" },
+  // Only high-resolution originals (1480px+) here — the arch is ~540px tall, so
+  // smaller uploads look blurry on retina screens.
+  { src: "https://ik.imagekit.io/wwdlbhsjw/public/backban.webp?tr=h-1100,q-90", alt: "Man with neck and back pain", position: "40% center" },
+  { src: "https://ik.imagekit.io/wwdlbhsjw/public/kneww.jpeg?tr=h-1100,q-90", alt: "Patient holding a painful knee", position: "62% center" },
+  { src: "https://ik.imagekit.io/wwdlbhsjw/public/babbbb.jpg?tr=h-1100,q-80", alt: "Ayush Ortho clinic entrance", position: "45% center" },
+  { src: "https://ik.imagekit.io/wwdlbhsjw/public/mainbabb.jpg?tr=q-90", alt: "Senior with neck pain", position: "78% center" },
 ];
 
 export const runningBarItems = [

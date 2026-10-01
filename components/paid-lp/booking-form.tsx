@@ -1,10 +1,37 @@
 "use client";
 
-import { CheckCircle2, ChevronDown, Loader2, Phone } from "lucide-react";
+import { CheckCircle2, ChevronDown, Loader2, Lock, Phone } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { PRIMARY_PHONE, PRIMARY_PHONE_HREF, branches, painConcerns, painDurations } from "./data";
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "paying" | "verifying" | "success" | "error";
+
+type RazorpayResponse = { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string };
+type RazorpayInstance = { open: () => void; on: (event: string, cb: (res: { error?: { description?: string } }) => void) => void };
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => RazorpayInstance;
+  }
+}
+
+const CHECKOUT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
+
+function loadRazorpay(): Promise<boolean> {
+  if (window.Razorpay) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = CHECKOUT_SRC;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
+const busyLabels: Partial<Record<Status, string>> = {
+  submitting: "Submitting…",
+  paying: "Opening payment…",
+  verifying: "Confirming payment…",
+};
 
 const branchNames = branches.map((b) => b.name);
 
@@ -55,19 +82,85 @@ function SelectField({
   );
 }
 
-export default function BookingForm() {
+// `bookingFee` (rupees) comes from the server env. When it is null, the form only
+// saves the lead, as before; otherwise the visitor pays it via Razorpay to confirm.
+export default function BookingForm({ bookingFee }: { bookingFee: number | null }) {
   const [form, setForm] = useState({ name: "", phone: "", painConcern: "", duration: "", branch: "" });
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  // Kept after the lead is saved so a cancelled payment can be retried without a duplicate lead.
+  const [leadId, setLeadId] = useState<string | null>(null);
+  const [paymentId, setPaymentId] = useState("");
+
+  const busy = status === "submitting" || status === "paying" || status === "verifying";
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value }));
+    setLeadId(null); // changed details are saved as a fresh lead
     if (error) setError("");
+  };
+
+  const fail = (message: string) => {
+    setStatus("error");
+    setError(message);
+  };
+
+  const startPayment = async (id: string) => {
+    setStatus("paying");
+    const [orderRes, loaded] = await Promise.all([
+      fetch("/api/paid-lp/razorpay/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId: id }),
+      }),
+      loadRazorpay(),
+    ]);
+    const order = await orderRes.json().catch(() => null);
+    if (!orderRes.ok || !order?.orderId) return fail(order?.error || "Could not start the payment. Please try again.");
+    if (!loaded || !window.Razorpay) return fail("Could not load the payment window. Please check your connection and try again.");
+
+    const checkout = new window.Razorpay({
+      key: order.keyId,
+      amount: order.amount,
+      currency: order.currency,
+      order_id: order.orderId,
+      name: "Ayush Ortho",
+      description: "Appointment booking",
+      prefill: order.prefill,
+      theme: { color: "#e13e20" },
+      handler: async (response: RazorpayResponse) => {
+        setStatus("verifying");
+        try {
+          const res = await fetch("/api/paid-lp/razorpay/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response),
+          });
+          const data = await res.json().catch(() => null);
+          if (!res.ok || !data?.verified) throw new Error(data?.error);
+          setPaymentId(data.paymentId);
+          setStatus("success");
+        } catch (err) {
+          fail((err instanceof Error && err.message) || "We could not confirm your payment. If money was deducted, please call us.");
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          setStatus((s) => (s === "paying" ? "idle" : s));
+          setError("Payment was not completed. Your details are saved — tap Pay to confirm your booking.");
+        },
+      },
+    });
+    checkout.on("payment.failed", (res) => {
+      setError(res.error?.description || "Payment failed. Please try again.");
+    });
+    checkout.open();
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (busy) return;
     setError("");
 
     if (form.name.trim().length < 2) return setError("Please enter your full name.");
@@ -76,21 +169,28 @@ export default function BookingForm() {
     if (!form.duration) return setError("Please select how long you have had the pain.");
     if (!form.branch) return setError("Please select your preferred branch.");
 
-    setStatus("submitting");
     try {
-      const response = await fetch("/api/paid-lp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, name: form.name.trim(), source: window.location.href }),
-      });
-      if (!response.ok) {
+      let id = leadId;
+      if (!id) {
+        setStatus("submitting");
+        const response = await fetch("/api/paid-lp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...form, name: form.name.trim(), source: window.location.href }),
+        });
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error);
+        if (!response.ok || !data?.leadId) throw new Error(data?.error);
+        id = data.leadId as string;
+        setLeadId(id);
       }
-      setStatus("success");
+
+      if (bookingFee === null) {
+        setStatus("success");
+      } else {
+        await startPayment(id);
+      }
     } catch (err) {
-      setStatus("error");
-      setError((err instanceof Error && err.message) || "Something went wrong. Please try again or call us directly.");
+      fail((err instanceof Error && err.message) || "Something went wrong. Please try again or call us directly.");
     }
   };
 
@@ -103,9 +203,19 @@ export default function BookingForm() {
           </span>
           <h3 className="mt-5 text-xl font-bold">Thank you, {form.name.trim()}!</h3>
           <p className="mt-2 max-w-[280px] text-sm leading-6 text-white/70">
-            Your appointment request for <span className="font-semibold text-white">{form.branch}</span> has been received. Our team will call
-            you shortly.
+            {paymentId ? (
+              <>
+                Your payment was successful and your booking for <span className="font-semibold text-white">{form.branch}</span> is
+                confirmed. Our team will call you shortly to fix your slot.
+              </>
+            ) : (
+              <>
+                Your appointment request for <span className="font-semibold text-white">{form.branch}</span> has been received. Our team
+                will call you shortly.
+              </>
+            )}
           </p>
+          {paymentId && <p className="mt-3 text-xs text-white/50">Payment ID: {paymentId}</p>}
           <a href={PRIMARY_PHONE_HREF} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#ff8a70]">
             <Phone className="h-4 w-4" /> {PRIMARY_PHONE}
           </a>
@@ -187,17 +297,24 @@ export default function BookingForm() {
 
           <button
             type="submit"
-            disabled={status === "submitting"}
+            disabled={busy}
             className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#e13e20] py-3.5 text-[13px] font-bold tracking-[.1em] text-white uppercase transition hover:bg-[#c9361c] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {status === "submitting" ? (
+            {busy ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Submitting…
+                <Loader2 className="h-4 w-4 animate-spin" /> {busyLabels[status]}
               </>
+            ) : bookingFee !== null ? (
+              `Pay ₹${bookingFee.toLocaleString("en-IN")} & Book`
             ) : (
               "Book Your Appointment"
             )}
           </button>
+          {bookingFee !== null && (
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-white/55">
+              <Lock className="h-3 w-3" /> Secure payment via Razorpay · ₹{bookingFee.toLocaleString("en-IN")} booking fee
+            </p>
+          )}
         </form>
       )}
     </div>
