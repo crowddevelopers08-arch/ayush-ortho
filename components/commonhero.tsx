@@ -57,11 +57,6 @@ const Hero: React.FC = () => {
               
               <div className="flex items-center gap-2 bg-[#fddfd7] rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base font-medium text-black">
                 <Check className="w-3 h-3 sm:w-4 sm:h-4 text-[#e13e20]" /> 
-                <span className="truncate">Free Consultation for 65+ (Thursdays)</span>
-              </div>
-              
-              <div className="flex items-center gap-2 bg-[#fddfd7] rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base font-medium text-black">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-[#e13e20]" /> 
                 <span className="truncate">15% OFF for Defense Families</span>
               </div>
             </div>

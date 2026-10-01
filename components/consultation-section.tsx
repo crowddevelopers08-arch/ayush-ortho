@@ -154,9 +154,6 @@ const KneePainTreatment: React.FC = () => {
             <p className="text-gray-700 mb-3 sm:mb-4 font-medium text-sm sm:text-base">
               Facing arthritis, gout, or chronic stiffness?
             </p>
-            <p className="font-bold text-[#e13e20] text-base sm:text-lg">
-              Special Benefit: Free Consultation every Thursday
-            </p>
           </div>
         </div>
       </div>

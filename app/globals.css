@@ -126,6 +126,15 @@
 }
 
 /* Added custom animations for advanced landing page effects */
+@keyframes paid-lp-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

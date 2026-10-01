@@ -158,10 +158,6 @@ const CombinedComponent: React.FC = () => {
                     Call Now
                   </button>
                   
-                  {/* Additional info for mobile */}
-                  <div className="lg:hidden text-center text-xs text-gray-300 mt-1">
-                    <p>Free consultation for senior citizens every Thursday</p>
-                  </div>
                 </div>
               </div>
               

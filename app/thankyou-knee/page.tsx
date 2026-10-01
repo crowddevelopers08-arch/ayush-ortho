@@ -65,12 +65,6 @@ const ThankYouPageknee: React.FC = () => {
               <div className="bg-[#e13e20] rounded-full p-1 mr-3 mt-1">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
               </div>
-              <span><strong>Free Consultation</strong> for Seniors (65+) every Thursday</span>
-            </li>
-            <li className="flex items-start">
-              <div className="bg-[#e13e20] rounded-full p-1 mr-3 mt-1">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              </div>
               <span><strong>15% Discount</strong> for Defense Families</span>
             </li>
           </ul>

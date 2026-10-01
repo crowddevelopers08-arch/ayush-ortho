@@ -1,0 +1,97 @@
+"use client";
+
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
+
+type CarouselProps = {
+  slides: ReactNode[];
+  label: string;
+  // Tailwind flex-basis classes controlling how many slides show per breakpoint.
+  slideClassName?: string;
+  tone?: "light" | "dark";
+  onSlideChange?: () => void;
+};
+
+export default function Carousel({
+  slides,
+  label,
+  slideClassName = "basis-full sm:basis-1/2 lg:basis-1/3",
+  tone = "light",
+  onSlideChange,
+}: CarouselProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", loop: true });
+  const [selected, setSelected] = useState(0);
+  const [snapCount, setSnapCount] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelected(emblaApi.selectedScrollSnap());
+    onSlideChange?.();
+  }, [emblaApi, onSlideChange]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onReInit = () => {
+      setSnapCount(emblaApi.scrollSnapList().length);
+      setSelected(emblaApi.selectedScrollSnap());
+    };
+    onReInit();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onReInit);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onReInit);
+    };
+  }, [emblaApi, onSelect]);
+
+  const dark = tone === "dark";
+  const arrowButton = `grid h-11 w-11 shrink-0 place-items-center rounded-full border transition hover:border-[#e13e20] hover:bg-[#e13e20] hover:text-white ${
+    dark ? "border-white/20 bg-white/5 text-white" : "border-[#d9dee7] bg-white text-[#142544] shadow-sm"
+  }`;
+
+  return (
+    <div role="region" aria-roledescription="carousel" aria-label={label}>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="-ml-4 flex touch-pan-y sm:-ml-5">
+          {slides.map((slide, i) => (
+            <div
+              key={i}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${slides.length}`}
+              className={`min-w-0 shrink-0 grow-0 pl-4 sm:pl-5 ${slideClassName}`}
+            >
+              {slide}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {snapCount > 1 && (
+        <div className="mt-8 flex items-center justify-center gap-4 sm:gap-5">
+          <button type="button" onClick={() => emblaApi?.scrollPrev()} aria-label="Previous slide" className={arrowButton}>
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {Array.from({ length: snapCount }, (_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => emblaApi?.scrollTo(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                aria-current={i === selected}
+                className={`h-2 rounded-full transition-all ${
+                  i === selected ? "w-7 bg-[#e13e20]" : dark ? "w-2 bg-white/30 hover:bg-white/50" : "w-2 bg-[#cfd5df] hover:bg-[#aab3c2]"
+                }`}
+              />
+            ))}
+          </div>
+          <button type="button" onClick={() => emblaApi?.scrollNext()} aria-label="Next slide" className={arrowButton}>
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

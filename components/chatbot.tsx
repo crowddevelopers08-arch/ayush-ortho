@@ -271,7 +271,7 @@ export default function Chatbot() {
       } else if (lowerMessage.includes('appointment') || lowerMessage.includes('book')) {
         botResponse = 'To book an appointment, please call +91 91500 10387. We\'re available daily from 10 AM to 8 PM. You can also visit us directly at our East Tambaram clinic.';
       } else if (lowerMessage.includes('cost') || lowerMessage.includes('price')) {
-        botResponse = 'Our treatment plans are competitively priced. We offer special discounts for seniors (free consultation on Thursdays) and defense families (15% off). Please call for detailed pricing.';
+        botResponse = 'Our treatment plans are competitively priced. We offer a special 15% discount for defense families. Please call for detailed pricing.';
       } else if (lowerMessage.includes('location') || lowerMessage.includes('address')) {
         botResponse = 'We\'re located at 23/5A Valmiki Street, East Tambaram, Chennai - 600059. We\'re open daily from 10 AM to 8 PM.';
       } else if (lowerMessage.includes('time') || lowerMessage.includes('hour')) {
