@@ -3,8 +3,8 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { TREATMENTS_FORM, RazorpayPayment, hmacMatches, paiseToRupees } from "@/lib/razorpay";
-import { createdOnStamp, postToTeleCRM } from "@/lib/telecrm";
+import { TREATMENTS_FORM, RazorpayPayment, hmacMatches } from "@/lib/razorpay";
+import { syncPaymentToTeleCRM } from "@/lib/treatments-payment-crm";
 
 /**
  * Razorpay calls this server-to-server once a payment settles. It is the reliable
@@ -15,44 +15,10 @@ import { createdOnStamp, postToTeleCRM } from "@/lib/telecrm";
  *   URL     https://<your-domain>/api/treatments/razorpay/webhook
  *   Secret  RAZORPAY_WEBHOOK_SECRET
  *   Events  payment.captured, payment.failed
+ *
+ * Successful payments are normally already in TeleCRM via the verify route; the
+ * shared sync skips a payment that is already marked as synced.
  */
-
-function crmPayload(payment: RazorpayPayment, paid: boolean) {
-  const notes = payment.notes ?? {};
-  const amount = `${payment.currency} ${paiseToRupees(payment.amount)}`;
-  const phone = (notes.phone || payment.contact || "").replace(/\D/g, "").slice(-10);
-  const status = paid ? "Paid" : "Payment Failed";
-
-  return {
-    fields: {
-      Id: "",
-      name: notes.name || "Razorpay customer",
-      email: notes.email || payment.email || "",
-      phone,
-      city_1: notes.branch || "",
-      Country: "India",
-      LeadID: "",
-      CreatedOn: createdOnStamp(),
-      "Lead Stage": paid ? "Booking Fee Paid" : "Booking Payment Failed",
-      "Lead Status": "new",
-      "Lead Request Type": "consultation-payment",
-      PageName: notes.source || TREATMENTS_FORM,
-      Source_URL: notes.source || "",
-      Area_of_Pain: notes.painConcern || "",
-      FormName: TREATMENTS_FORM,
-      Lead_Source: notes.source || "",
-      Source: notes.source || "",
-    },
-    actions: [
-      { type: "SYSTEM_NOTE", text: `Booking payment: ${status} – ${amount}` },
-      { type: "SYSTEM_NOTE", text: `Razorpay Payment ID: ${payment.id}` },
-      { type: "SYSTEM_NOTE", text: `Razorpay Order ID: ${payment.order_id}` },
-      { type: "SYSTEM_NOTE", text: `Method: ${payment.method || "Not specified"}` },
-      { type: "SYSTEM_NOTE", text: `Preferred Branch: ${notes.branch || "Not specified"}` },
-      { type: "SYSTEM_NOTE", text: `Website Lead ID: ${notes.leadId || "Not specified"}` },
-    ],
-  };
-}
 
 export async function POST(req: NextRequest) {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -106,9 +72,9 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  let crm: "ok" | "failed" = "ok";
+  let crm: "ok" | "skipped" | "not-ours" | "failed";
   try {
-    await postToTeleCRM(crmPayload(payment, paid));
+    crm = await syncPaymentToTeleCRM(payment.id);
   } catch (err) {
     crm = "failed";
     console.error("[Razorpay webhook TeleCRM] Error:", err instanceof Error ? err.message : err);

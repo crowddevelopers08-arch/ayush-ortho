@@ -175,3 +175,7 @@ export const branches = [
 ];
 
 export const toTelHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
+
+// Thank-you page the booking form redirects to after a successful booking.
+export const THANK_YOU_PATH = "/treatments/thank-you";
+export const THANK_YOU_STORAGE_KEY = "ayush-treatments-booking";

@@ -1,10 +1,11 @@
 "use client";
 
-import { CheckCircle2, ChevronDown, Loader2, Lock } from "lucide-react";
+import { ChevronDown, Loader2, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { branches, painConcerns } from "./data";
+import { THANK_YOU_PATH, THANK_YOU_STORAGE_KEY, branches, painConcerns } from "./data";
 
-type Status = "idle" | "submitting" | "paying" | "verifying" | "success" | "error";
+type Status = "idle" | "submitting" | "paying" | "verifying" | "redirecting" | "error";
 
 type RazorpayResponse = { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string };
 type RazorpayInstance = { open: () => void; on: (event: string, cb: (res: { error?: { description?: string } }) => void) => void };
@@ -33,6 +34,7 @@ const busyLabels: Partial<Record<Status, string>> = {
   submitting: "Submitting…",
   paying: "Opening payment…",
   verifying: "Confirming payment…",
+  redirecting: "Redirecting…",
 };
 
 const branchNames = branches.map((b) => b.name);
@@ -92,9 +94,24 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
   const [error, setError] = useState("");
   // Kept after the lead is saved so a cancelled payment can be retried without a duplicate lead.
   const [leadId, setLeadId] = useState<string | null>(null);
-  const [paymentId, setPaymentId] = useState("");
+  const router = useRouter();
 
-  const busy = status === "submitting" || status === "paying" || status === "verifying";
+  const busy = status !== "idle" && status !== "error";
+
+  // Hands the booking details to the thank-you page through sessionStorage, so the
+  // visitor's name never appears in the URL (or in analytics that log URLs).
+  const goToThankYou = (paymentId?: string) => {
+    setStatus("redirecting");
+    try {
+      sessionStorage.setItem(
+        THANK_YOU_STORAGE_KEY,
+        JSON.stringify({ name: form.name.trim(), branch: form.branch, paymentId: paymentId ?? "" }),
+      );
+    } catch {
+      // Storage blocked (private mode) — the thank-you page falls back to a generic message.
+    }
+    router.push(THANK_YOU_PATH);
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -141,8 +158,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
           });
           const data = await res.json().catch(() => null);
           if (!res.ok || !data?.verified) throw new Error(data?.error);
-          setPaymentId(data.paymentId);
-          setStatus("success");
+          goToThankYou(data.paymentId);
         } catch (err) {
           fail((err instanceof Error && err.message) || "We could not confirm your payment. If money was deducted, please call us.");
         }
@@ -187,7 +203,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
       }
 
       if (bookingFee === null) {
-        setStatus("success");
+        goToThankYou();
       } else {
         await startPayment(id);
       }
@@ -198,28 +214,6 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
 
   return (
     <div id="book-appointment" className="scroll-mt-6 rounded-[1.5rem] bg-[#142544] p-5 shadow-[0_24px_60px_rgba(20,37,68,.28)] sm:p-6 xl:p-7">
-      {status === "success" ? (
-        <div className="flex flex-col items-center py-10 text-center text-white">
-          <span className="grid h-16 w-16 place-items-center rounded-full bg-white/10 text-[#5ed49a]">
-            <CheckCircle2 className="h-9 w-9" />
-          </span>
-          <h3 className="mt-5 text-xl font-bold">Thank you, {form.name.trim()}!</h3>
-          <p className="mt-2 max-w-[280px] text-sm leading-6 text-white/70">
-            {paymentId ? (
-              <>
-                Your payment was successful and your booking for <span className="font-semibold text-white">{form.branch}</span> is
-                confirmed. Our team will call you shortly to fix your slot.
-              </>
-            ) : (
-              <>
-                Your appointment request for <span className="font-semibold text-white">{form.branch}</span> has been received. Our team
-                will call you shortly.
-              </>
-            )}
-          </p>
-          {paymentId && <p className="mt-3 text-xs text-white/50">Payment ID: {paymentId}</p>}
-        </div>
-      ) : (
         <form onSubmit={handleSubmit} noValidate>
           <h3 className="mb-5 text-center text-lg leading-tight font-extrabold text-white xl:text-xl">Book Your Appointment</h3>
 
@@ -325,7 +319,6 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
             </p>
           )}
         </form>
-      )}
     </div>
   );
 }
