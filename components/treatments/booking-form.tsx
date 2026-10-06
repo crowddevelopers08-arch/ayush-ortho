@@ -1,8 +1,8 @@
 "use client";
 
-import { CheckCircle2, ChevronDown, Loader2, Lock, Phone } from "lucide-react";
+import { CheckCircle2, ChevronDown, Loader2, Lock } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { PRIMARY_PHONE, PRIMARY_PHONE_HREF, branches, painConcerns, painDurations } from "./data";
+import { branches, painConcerns } from "./data";
 
 type Status = "idle" | "submitting" | "paying" | "verifying" | "success" | "error";
 
@@ -14,7 +14,9 @@ declare global {
   }
 }
 
-const CHECKOUT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const CHECKOUT_SRC ="https://checkout.razorpay.com/v1/checkout.js";
 
 function loadRazorpay(): Promise<boolean> {
   if (window.Razorpay) return Promise.resolve(true);
@@ -56,12 +58,12 @@ function SelectField({
 }) {
   return (
     <div>
-      <label htmlFor={`paid-lp-${name}`} className={labelClass}>
+      <label htmlFor={`treatments-${name}`} className={labelClass}>
         {label}
       </label>
       <div className="relative">
         <select
-          id={`paid-lp-${name}`}
+          id={`treatments-${name}`}
           name={name}
           value={value}
           onChange={onChange}
@@ -85,7 +87,7 @@ function SelectField({
 // `bookingFee` (rupees) comes from the server env. When it is null, the form only
 // saves the lead, as before; otherwise the visitor pays it via Razorpay to confirm.
 export default function BookingForm({ bookingFee }: { bookingFee: number | null }) {
-  const [form, setForm] = useState({ name: "", phone: "", painConcern: "", duration: "", branch: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", painConcern: "", branch: "" });
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   // Kept after the lead is saved so a cancelled payment can be retried without a duplicate lead.
@@ -109,7 +111,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
   const startPayment = async (id: string) => {
     setStatus("paying");
     const [orderRes, loaded] = await Promise.all([
-      fetch("/api/paid-lp/razorpay/order", {
+      fetch("/api/treatments/razorpay/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ leadId: id }),
@@ -132,7 +134,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
       handler: async (response: RazorpayResponse) => {
         setStatus("verifying");
         try {
-          const res = await fetch("/api/paid-lp/razorpay/verify", {
+          const res = await fetch("/api/treatments/razorpay/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response),
@@ -164,19 +166,19 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
     setError("");
 
     if (form.name.trim().length < 2) return setError("Please enter your full name.");
+    if (!EMAIL_PATTERN.test(form.email.trim())) return setError("Please enter a valid email address.");
     if (!/^[6-9]\d{9}$/.test(form.phone)) return setError("Please enter a valid 10-digit mobile number.");
     if (!form.painConcern) return setError("Please select your pain concern.");
-    if (!form.duration) return setError("Please select how long you have had the pain.");
     if (!form.branch) return setError("Please select your preferred branch.");
 
     try {
       let id = leadId;
       if (!id) {
         setStatus("submitting");
-        const response = await fetch("/api/paid-lp", {
+        const response = await fetch("/api/treatments", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...form, name: form.name.trim(), source: window.location.href }),
+          body: JSON.stringify({ ...form, name: form.name.trim(), email: form.email.trim(), source: window.location.href }),
         });
         const data = await response.json().catch(() => null);
         if (!response.ok || !data?.leadId) throw new Error(data?.error);
@@ -216,9 +218,6 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
             )}
           </p>
           {paymentId && <p className="mt-3 text-xs text-white/50">Payment ID: {paymentId}</p>}
-          <a href={PRIMARY_PHONE_HREF} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#ff8a70]">
-            <Phone className="h-4 w-4" /> {PRIMARY_PHONE}
-          </a>
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate>
@@ -226,11 +225,11 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
 
           <div className="flex flex-col gap-3">
             <div>
-              <label htmlFor="paid-lp-name" className={labelClass}>
+              <label htmlFor="treatments-name" className={labelClass}>
                 Name
               </label>
               <input
-                id="paid-lp-name"
+                id="treatments-name"
                 type="text"
                 name="name"
                 autoComplete="name"
@@ -242,14 +241,32 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
             </div>
 
             <div>
-              <label htmlFor="paid-lp-phone" className={labelClass}>
+              <label htmlFor="treatments-email" className={labelClass}>
+                Email
+              </label>
+              <input
+                id="treatments-email"
+                type="email"
+                name="email"
+                inputMode="email"
+                autoComplete="email"
+                maxLength={120}
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Enter your email address"
+                className={fieldClass}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="treatments-phone" className={labelClass}>
                 Mobile
               </label>
               <div className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2.5 transition focus-within:bg-white/[.16] focus-within:ring-2 focus-within:ring-[#e13e20]/60">
                 <span className="shrink-0 text-[13px] font-semibold text-white/55">+91</span>
                 <span className="shrink-0 text-white/20">|</span>
                 <input
-                  id="paid-lp-phone"
+                  id="treatments-phone"
                   type="tel"
                   name="phone"
                   inputMode="numeric"
@@ -269,14 +286,6 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
               value={form.painConcern}
               placeholder="Select pain concern"
               options={painConcerns}
-              onChange={handleChange}
-            />
-            <SelectField
-              label="Duration"
-              name="duration"
-              value={form.duration}
-              placeholder="Select duration"
-              options={painDurations}
               onChange={handleChange}
             />
             <SelectField

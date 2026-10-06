@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { PAID_LP_FORM, RazorpayPayment, hmacMatches, paiseToRupees } from "@/lib/razorpay";
+import { TREATMENTS_FORM, RazorpayPayment, hmacMatches, paiseToRupees } from "@/lib/razorpay";
 import { createdOnStamp, postToTeleCRM } from "@/lib/telecrm";
 
 /**
@@ -12,7 +12,7 @@ import { createdOnStamp, postToTeleCRM } from "@/lib/telecrm";
  * mid-payment, but this still fires, so every paid booking reaches the DB and TeleCRM.
  *
  * Configure in Razorpay → Settings → Webhooks:
- *   URL     https://<your-domain>/api/paid-lp/razorpay/webhook
+ *   URL     https://<your-domain>/api/treatments/razorpay/webhook
  *   Secret  RAZORPAY_WEBHOOK_SECRET
  *   Events  payment.captured, payment.failed
  */
@@ -27,7 +27,7 @@ function crmPayload(payment: RazorpayPayment, paid: boolean) {
     fields: {
       Id: "",
       name: notes.name || "Razorpay customer",
-      email: payment.email || "",
+      email: notes.email || payment.email || "",
       phone,
       city_1: notes.branch || "",
       Country: "India",
@@ -36,10 +36,10 @@ function crmPayload(payment: RazorpayPayment, paid: boolean) {
       "Lead Stage": paid ? "Booking Fee Paid" : "Booking Payment Failed",
       "Lead Status": "new",
       "Lead Request Type": "consultation-payment",
-      PageName: notes.source || PAID_LP_FORM,
+      PageName: notes.source || TREATMENTS_FORM,
       Source_URL: notes.source || "",
       Area_of_Pain: notes.painConcern || "",
-      FormName: PAID_LP_FORM,
+      FormName: TREATMENTS_FORM,
       Lead_Source: notes.source || "",
       Source: notes.source || "",
     },
@@ -86,8 +86,8 @@ export async function POST(req: NextRequest) {
   if (event !== "payment.captured" && event !== "payment.failed") {
     return NextResponse.json({ received: true, ignored: event });
   }
-  if (!payment?.id || payment.notes?.form !== PAID_LP_FORM) {
-    return NextResponse.json({ received: true, ignored: "not a paid-lp payment" });
+  if (!payment?.id || payment.notes?.form !== TREATMENTS_FORM) {
+    return NextResponse.json({ received: true, ignored: "not a treatments payment" });
   }
 
   const paid = event === "payment.captured";
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   if (paid && payment.notes?.leadId) {
     try {
       await prisma.lead.updateMany({
-        where: { id: payment.notes.leadId, formName: PAID_LP_FORM },
+        where: { id: payment.notes.leadId, formName: TREATMENTS_FORM },
         data: { status: "CONVERTED" },
       });
       db = "ok";

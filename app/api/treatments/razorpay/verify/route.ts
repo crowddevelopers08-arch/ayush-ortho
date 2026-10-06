@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { PAID_LP_FORM, fetchPayment, hmacMatches, razorpayKeys } from "@/lib/razorpay";
+import { TREATMENTS_FORM, fetchPayment, hmacMatches, razorpayKeys } from "@/lib/razorpay";
 
 const UNVERIFIED = "We could not verify this payment. If money was deducted, please call us.";
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const payment = await fetchPayment(paymentId, keys.keyId, keys.keySecret);
-    if (payment.order_id !== orderId || payment.notes?.form !== PAID_LP_FORM) {
+    if (payment.order_id !== orderId || payment.notes?.form !== TREATMENTS_FORM) {
       return NextResponse.json({ verified: false, error: UNVERIFIED }, { status: 400 });
     }
     if (payment.status !== "captured" && payment.status !== "authorized") {
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     // Idempotent: the webhook may already have marked this lead.
     if (payment.notes?.leadId) {
       await prisma.lead.updateMany({
-        where: { id: payment.notes.leadId, formName: PAID_LP_FORM },
+        where: { id: payment.notes.leadId, formName: TREATMENTS_FORM },
         data: { status: "CONVERTED" },
       });
     }

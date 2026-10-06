@@ -23,7 +23,6 @@ export const runningBarItems = [
 ];
 
 export const painConcerns = ["Knee", "Back", "Neck", "Shoulder", "Foot Pain"];
-export const painDurations = ["Under 3 months", "3 to 12 months", "Over year"];
 
 export const integratedApproach = ["Ayurveda", "Varma Therapy", "OMT", "Chiropractic Care"];
 
@@ -117,12 +116,35 @@ export const treatmentPlans = [
 ];
 
 // Patient videos already published on the clinic's YouTube channel.
-export const videoIds = [
-  "foj1EjAh930",
-  "QsYk3oy4614",
-  "cITuCjkaJGA",
-  "G_cnj3I13pY",
-  "TolZhRhH_2s",
+// Vertical (9:16) patient testimonials on Cloudinary. The poster is the same file
+// with a .jpg extension, which Cloudinary renders from the frame at 1s.
+const CLOUDINARY_VIDEO = "https://res.cloudinary.com/dzonmuzpx/video/upload";
+const testimonialVideo = (version: string, path: string, name: string, concern: string) => ({
+  src: `${CLOUDINARY_VIDEO}/${version}/${path}.mp4`,
+  poster: `${CLOUDINARY_VIDEO}/so_1,w_720,q_auto/${version}/${path}.jpg`,
+  name,
+  concern,
+});
+
+export const patientVideos = [
+  testimonialVideo(
+    "v1791283152",
+    "Ayush%20Orth/AQOfWmRoQSVhTpGwYyucQ9Y6BLTkj87vmKS4oyfPlL07m-ieND701zyjpopLdEohFLAezaN9pyR2JP9GfoREPG7EHJQZ20p6_1_tneeo9",
+    "P. Ramesh",
+    "Knee Pain",
+  ),
+  testimonialVideo(
+    "v1791283153",
+    "Ayush%20Orth/AQPW563ZeJcbF3l_diS0rAzxsG12OdWSxuMqqDDVa_tA8F2fc4-Na2Z0qXXhPiWfY2BU61mesIRlJdhdKsilYbuE261CHZr1_uybuzy",
+    "R. Vaishnavi",
+    "Disc Bulge",
+  ),
+  testimonialVideo(
+    "v1791283153",
+    "Ayush%20Orth/AQOTskwMFe--MT8fFaAbCPCJIp_hAekVOyK1ebLLTx4ZfhkzZ3TFgfHFOxU9Co-bpDKxua91RIRd-XDDDOzgE6wVlU8NKcAs_f8e3ao",
+    "Kesavan",
+    "Joint Pain",
+  ),
 ];
 
 export const branches = [

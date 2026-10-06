@@ -1,8 +1,8 @@
 import crypto from "crypto";
 
-// Every order created by the paid LP carries this in its notes. The Razorpay account
+// Every order created by the treatments page carries this in its notes. The Razorpay account
 // may be shared with other sites, so the webhook uses it to ignore their payments.
-export const PAID_LP_FORM = "paid-lp";
+export const TREATMENTS_FORM = "treatments";
 
 export function razorpayKeys() {
   const keyId = process.env.RAZORPAY_KEY_ID;

@@ -1,7 +1,7 @@
-import { ArrowRight, CheckCircle2, Phone } from "lucide-react";
+import { ArrowRight, CalendarCheck, CheckCircle2 } from "lucide-react";
 import { bookingFeeRupees } from "@/lib/razorpay";
 import BookingForm from "./booking-form";
-import { BOOKING_ANCHOR, LOGO_URL, PRIMARY_PHONE, PRIMARY_PHONE_HREF } from "./data";
+import { BOOKING_ANCHOR, LOGO_URL } from "./data";
 import HeroImageSlider from "./hero-image-slider";
 
 const trustItems = ["5000+ Patients Treated", "More than 20,000+", "16+ Years of experience"];
@@ -12,12 +12,11 @@ export default function HeroSection() {
       <header className="flex w-full items-center justify-between px-4 py-3 sm:px-6 sm:py-4 md:px-10 xl:px-16 2xl:px-24">
         <img src={LOGO_URL} alt="Ayush Ortho" className="h-10 w-auto sm:h-12" />
         <a
-          href={PRIMARY_PHONE_HREF}
-          className="inline-flex items-center gap-2 rounded-full border border-[#142544]/15 bg-white/80 px-4 py-2.5 text-sm font-semibold text-[#142544] backdrop-blur transition hover:bg-white"
+          href={BOOKING_ANCHOR}
+          className="inline-flex items-center gap-2 rounded-full bg-[#e13e20] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(225,62,32,.28)] transition hover:bg-[#c9361c] sm:px-5"
         >
-          <Phone className="h-4 w-4 text-[#e13e20]" />
-          <span className="max-sm:hidden">{PRIMARY_PHONE}</span>
-          <span className="sm:hidden">Call</span>
+          <CalendarCheck className="h-4 w-4" />
+          Book Now
         </a>
       </header>
 
@@ -56,17 +55,11 @@ export default function HeroSection() {
                   <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </a>
-              <a
-                href={PRIMARY_PHONE_HREF}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#142544]/20 bg-white/70 px-7 py-3.5 text-sm font-semibold text-[#142544] backdrop-blur-sm transition hover:bg-white sm:w-auto"
-              >
-                <Phone className="h-4 w-4 text-[#e13e20]" /> Call {PRIMARY_PHONE}
-              </a>
             </div>
 
             {/* Trust marquee */}
             <div className="mt-4 w-full max-w-full overflow-hidden sm:mt-6 [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)] lg:max-w-[620px]">
-              <div className="flex w-max animate-[paid-lp-marquee_14s_linear_infinite] motion-reduce:animate-none">
+              <div className="flex w-max animate-[treatments-marquee_14s_linear_infinite] motion-reduce:animate-none">
                 {[0, 1].map((copy) => (
                   <div key={copy} className="flex shrink-0 gap-3 pr-3" aria-hidden={copy === 1}>
                     {[...trustItems, ...trustItems].map((item, i) => (

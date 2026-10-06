@@ -1,5 +1,5 @@
 import { Clock, MapPin, Navigation, Phone } from "lucide-react";
-import { LOGO_URL, branches, toTelHref } from "./data";
+import { LOGO_URL, branches } from "./data";
 
 export default function BranchesFooter() {
   return (
@@ -30,11 +30,9 @@ export default function BranchesFooter() {
                   <MapPin className="mt-1 h-4 w-4 shrink-0 text-[#ff8a70]" />
                   {address}
                 </li>
-                <li>
-                  <a href={toTelHref(phone)} className="flex gap-2.5 font-medium text-white hover:text-[#ff8a70]">
-                    <Phone className="mt-1 h-4 w-4 shrink-0 text-[#ff8a70]" />
-                    {phone}
-                  </a>
+                <li className="flex gap-2.5 font-medium text-white">
+                  <Phone className="mt-1 h-4 w-4 shrink-0 text-[#ff8a70]" />
+                  {phone}
                 </li>
               </ul>
 

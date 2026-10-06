@@ -1,27 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { createdOnStamp, postToTeleCRM } from "@/lib/telecrm";
-import { branches, painConcerns, painDurations } from "@/components/paid-lp/data";
+import { branches, painConcerns } from "@/components/treatments/data";
 
-const FORM_NAME = "paid-lp";
-const DEFAULT_SOURCE = "https://www.ayushortho.in/paid-lp";
+const FORM_NAME = "treatments";
+const DEFAULT_SOURCE = "https://www.ayushortho.in/treatments";
 const branchNames = branches.map((b) => b.name);
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-interface PaidLeadData {
+interface TreatmentsLeadData {
   name: string;
+  email: string;
   phone: string;
   painConcern: string;
-  duration: string;
   branch: string;
   source: string;
 }
 
-async function sendToTeleCRM(lead: PaidLeadData) {
+async function sendToTeleCRM(lead: TreatmentsLeadData) {
   const payload = {
     fields: {
       Id: "",
       name: lead.name,
-      email: "",
+      email: lead.email,
       phone: lead.phone,
       city_1: lead.branch,
       Country: "",
@@ -44,11 +45,11 @@ async function sendToTeleCRM(lead: PaidLeadData) {
       { type: "SYSTEM_NOTE", text: `Form Name: ${FORM_NAME}` },
       {
         type: "SYSTEM_NOTE",
-        text: `Complete Form Data: Name: ${lead.name} | Phone: ${lead.phone} | Pain Concern: ${lead.painConcern} | Duration: ${lead.duration} | Branch: ${lead.branch} | Source URL: ${lead.source}`,
+        text: `Complete Form Data: Name: ${lead.name} | Email: ${lead.email} | Phone: ${lead.phone} | Pain Concern: ${lead.painConcern} | Branch: ${lead.branch} | Source URL: ${lead.source}`,
       },
       { type: "SYSTEM_NOTE", text: `Lead Source URL: ${lead.source}` },
       { type: "SYSTEM_NOTE", text: `Area of Pain: ${lead.painConcern}` },
-      { type: "SYSTEM_NOTE", text: `Pain Duration: ${lead.duration}` },
+      { type: "SYSTEM_NOTE", text: `Email: ${lead.email}` },
       { type: "SYSTEM_NOTE", text: `Preferred Branch: ${lead.branch}` },
     ],
   };
@@ -58,17 +59,17 @@ async function sendToTeleCRM(lead: PaidLeadData) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<Record<keyof PaidLeadData, unknown>>;
-    const readField = (key: keyof PaidLeadData) => {
+    const body = (await request.json()) as Partial<Record<keyof TreatmentsLeadData, unknown>>;
+    const readField = (key: keyof TreatmentsLeadData) => {
       const value = body[key];
       return typeof value === "string" ? value.trim() : "";
     };
 
-    const leadData: PaidLeadData = {
+    const leadData: TreatmentsLeadData = {
       name: readField("name"),
+      email: readField("email").toLowerCase().slice(0, 120),
       phone: readField("phone").replace(/\D/g, ""),
       painConcern: readField("painConcern"),
-      duration: readField("duration"),
       branch: readField("branch"),
       source: readField("source") || request.headers.get("referer") || DEFAULT_SOURCE,
     };
@@ -76,22 +77,21 @@ export async function POST(request: NextRequest) {
     if (!leadData.name || !/^[6-9]\d{9}$/.test(leadData.phone)) {
       return NextResponse.json({ error: "Valid name and 10-digit mobile number are required" }, { status: 400 });
     }
-    if (
-      !painConcerns.includes(leadData.painConcern) ||
-      !painDurations.includes(leadData.duration) ||
-      !branchNames.includes(leadData.branch)
-    ) {
-      return NextResponse.json({ error: "Please select your pain concern, duration and branch" }, { status: 400 });
+    if (!EMAIL_PATTERN.test(leadData.email)) {
+      return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
+    }
+    if (!painConcerns.includes(leadData.painConcern) || !branchNames.includes(leadData.branch)) {
+      return NextResponse.json({ error: "Please select your pain concern and branch" }, { status: 400 });
     }
 
     const savedLead = await prisma.lead.create({
       data: {
         name: leadData.name,
         phone: leadData.phone,
-        email: "",
+        email: leadData.email,
         age: "",
         areaOfPain: leadData.painConcern,
-        treatmentPlan: `Pain duration: ${leadData.duration}`,
+        treatmentPlan: "",
         // The leads table has no branch column; `city` holds the preferred branch.
         city: leadData.branch,
         source: leadData.source,
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       });
     } catch (error) {
       telecrmError = error instanceof Error ? error.message : String(error);
-      console.error("Paid LP lead TeleCRM sync failed:", telecrmError);
+      console.error("Treatments lead TeleCRM sync failed:", telecrmError);
     }
 
     return NextResponse.json({
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       telecrmSynced: !telecrmError,
     });
   } catch (error) {
-    console.error("Paid LP lead submission failed:", error);
+    console.error("Treatments lead submission failed:", error);
     return NextResponse.json(
       { error: "Unable to submit your request. Please try again." },
       { status: 500 },

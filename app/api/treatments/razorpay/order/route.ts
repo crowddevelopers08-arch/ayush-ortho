@@ -3,11 +3,11 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { PAID_LP_FORM, basicAuth, bookingFeeRupees, razorpayKeys } from "@/lib/razorpay";
+import { TREATMENTS_FORM, basicAuth, bookingFeeRupees, razorpayKeys } from "@/lib/razorpay";
 
 const NOT_CONFIGURED = "Online payment is not available right now. Please call us to book.";
 
-// Creates a Razorpay order for a lead the paid LP form has already saved. The amount
+// Creates a Razorpay order for a lead the treatments page form has already saved. The amount
 // comes from the server env and the payer details from the database, never the browser.
 export async function POST(req: NextRequest) {
   const keys = razorpayKeys();
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   }
 
   const lead = leadId
-    ? await prisma.lead.findFirst({ where: { id: leadId, formName: PAID_LP_FORM } })
+    ? await prisma.lead.findFirst({ where: { id: leadId, formName: TREATMENTS_FORM } })
     : null;
   if (!lead) {
     return NextResponse.json({ error: "Please submit the booking form first." }, { status: 400 });
@@ -45,9 +45,10 @@ export async function POST(req: NextRequest) {
         receipt: `ao_${lead.id}`.slice(0, 40), // Razorpay caps receipt at 40 chars
         notes: {
           product: "Ayush Ortho Appointment Booking",
-          form: PAID_LP_FORM,
+          form: TREATMENTS_FORM,
           leadId: lead.id,
           name: lead.name,
+          email: lead.email,
           phone: lead.phone,
           painConcern: lead.areaOfPain ?? "",
           branch: lead.city ?? "",
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
       amount: order.amount,
       currency: order.currency,
       keyId: keys.keyId, // publishable key — safe to expose to the browser
-      prefill: { name: lead.name, contact: `+91${lead.phone}` },
+      prefill: { name: lead.name, email: lead.email || undefined, contact: `+91${lead.phone}` },
     });
   } catch (err) {
     console.error("[Razorpay order] Error:", err instanceof Error ? err.message : err);

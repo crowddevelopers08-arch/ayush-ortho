@@ -126,7 +126,7 @@
 }
 
 /* Added custom animations for advanced landing page effects */
-@keyframes paid-lp-marquee {
+@keyframes treatments-marquee {
   from {
     transform: translateX(0);
   }

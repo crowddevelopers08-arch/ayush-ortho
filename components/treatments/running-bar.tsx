@@ -6,7 +6,7 @@ export default function RunningBar() {
 
   return (
     <div className="overflow-hidden bg-[#e13e20] py-2.5 text-white" aria-label={runningBarItems.join(", ")}>
-      <div className="flex w-max animate-[paid-lp-marquee_28s_linear_infinite] hover:paused motion-reduce:animate-none" aria-hidden="true">
+      <div className="flex w-max animate-[treatments-marquee_28s_linear_infinite] hover:[animation-play-state:paused] motion-reduce:animate-none" aria-hidden="true">
         {[0, 1].map((copy) => (
           <div key={copy} className="flex shrink-0 items-center">
             {track.map((item, i) => (
