@@ -27,7 +27,7 @@ export default function HeroSection() {
           <div className="flex min-w-0 flex-col items-center text-center lg:col-start-1 lg:row-start-2 lg:items-start lg:text-left">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#e13e20]/30 bg-[#e13e20]/[.07] px-3.5 py-1.5">
               <span className="h-2 w-2 shrink-0 rounded-full bg-[#e13e20]" />
-              <span className="text-[11px] font-semibold text-[#142544] sm:text-xs lg:text-sm">#1 Ortho Clinic in Chennai</span>
+              <span className="text-[11px] font-semibold text-[#142544] sm:text-xs lg:text-sm">#1 Ortho Clinic in TamilNadu</span>
             </div>
 
             <h1 className="text-[26px] leading-[1.18] font-extrabold text-[#142544] sm:text-[34px] md:text-[42px] lg:text-[50px] xl:text-[58px] 2xl:text-[64px]">

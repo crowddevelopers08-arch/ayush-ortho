@@ -67,6 +67,7 @@ export default function PatientVideoCarousel() {
     <Carousel
       label="Patient videos"
       controls="sides"
+      autoplayDelay={45000}
       // Padding gives the card shadow room inside the carousel's clipped viewport.
       slideClassName="basis-full py-6"
       onSlideChange={stopPlayback}
