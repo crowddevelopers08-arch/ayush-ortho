@@ -5,7 +5,7 @@ import TestimonialSection from "@/components/treatments/testimonial-section"
 import PainSection from "@/components/treatments/pain-section"
 import IntegratedApproachCta from "@/components/treatments/integrated-approach-cta"
 import TreatmentDuration from "@/components/treatments/treatment-duration"
-import VideoSection from "@/components/treatments/video-section"
+import BookingSection from "@/components/treatments/booking-section"
 import BranchesFooter from "@/components/treatments/branches-footer"
 import MobileCtaBar from "@/components/treatments/mobile-cta-bar"
 
@@ -20,12 +20,12 @@ export default function TreatmentsPage() {
     <div className="font-['Outfit',sans-serif]">
       <RunningBar />
       <HeroSection />
+      <BookingSection />
       <TestimonialSection />
       <PainSection />
       <IntegratedApproachCta />
       <TreatmentDuration />
       <IntegratedApproachCta />
-      <VideoSection />
       <BranchesFooter />
       <MobileCtaBar />
     </div>

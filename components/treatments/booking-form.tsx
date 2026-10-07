@@ -41,7 +41,7 @@ const branchNames = branches.map((b) => b.name);
 
 const labelClass = "mb-1.5 block text-[10px] font-bold tracking-[.16em] text-white uppercase";
 const fieldClass =
-  "w-full rounded-full bg-white/10 px-4 py-2.5 text-[13px] text-white outline-none transition placeholder:text-white/35 focus:bg-white/[.16] focus:ring-2 focus:ring-[#e13e20]/60";
+  "h-[42px] w-full rounded-full bg-white/10 px-4 text-[13px] text-white outline-none transition placeholder:text-white/35 focus:bg-white/[.16] focus:ring-2 focus:ring-[#e13e20]/60";
 
 function SelectField({
   label,
@@ -213,11 +213,12 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
   };
 
   return (
-    <div id="book-appointment" className="scroll-mt-6 rounded-[1.5rem] bg-[#142544] p-5 shadow-[0_24px_60px_rgba(20,37,68,.28)] sm:p-6 xl:p-7">
+    <div id="book-appointment" className="scroll-mt-6 rounded-[1.5rem] bg-[#142544] p-5 shadow-[0_24px_60px_rgba(20,37,68,.28)] sm:p-7 lg:p-8">
         <form onSubmit={handleSubmit} noValidate>
-          <h3 className="mb-5 text-center text-lg leading-tight font-extrabold text-white xl:text-xl">Book Your Appointment</h3>
+          <h3 className="mb-5 text-center text-lg leading-tight font-extrabold text-white sm:mb-6 sm:text-2xl">Book Your Appointment</h3>
 
-          <div className="flex flex-col gap-3">
+          {/* Stacked on phones, 2 per row on tablets, 3 on laptops, all in one row on wide screens. */}
+          <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-6">
             <div>
               <label htmlFor="treatments-name" className={labelClass}>
                 Name
@@ -229,7 +230,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
                 autoComplete="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="Enter your full name"
+                placeholder="Full name"
                 className={fieldClass}
               />
             </div>
@@ -247,7 +248,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
                 maxLength={120}
                 value={form.email}
                 onChange={handleChange}
-                placeholder="Enter your email address"
+                placeholder="Email address"
                 className={fieldClass}
               />
             </div>
@@ -256,7 +257,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
               <label htmlFor="treatments-phone" className={labelClass}>
                 Mobile
               </label>
-              <div className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2.5 transition focus-within:bg-white/[.16] focus-within:ring-2 focus-within:ring-[#e13e20]/60">
+              <div className="flex h-[42px] items-center gap-1.5 rounded-full bg-white/10 px-4 transition focus-within:bg-white/[.16] focus-within:ring-2 focus-within:ring-[#e13e20]/60">
                 <span className="shrink-0 text-[13px] font-semibold text-white/55">+91</span>
                 <span className="shrink-0 text-white/20">|</span>
                 <input
@@ -278,7 +279,7 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
               label="Pain Concern"
               name="painConcern"
               value={form.painConcern}
-              placeholder="Select pain concern"
+              placeholder="Pain concern"
               options={painConcerns}
               onChange={handleChange}
             />
@@ -286,35 +287,36 @@ export default function BookingForm({ bookingFee }: { bookingFee: number | null 
               label="Branch"
               name="branch"
               value={form.branch}
-              placeholder="Select nearest branch"
+              placeholder="Nearest branch"
               options={branchNames}
               onChange={handleChange}
             />
+
+            <button
+              type="submit"
+              disabled={busy}
+              className="flex h-[42px] w-full items-center justify-center gap-2 rounded-full bg-[#e13e20] px-4 text-[13px] font-bold tracking-[.06em] whitespace-nowrap text-white uppercase max-sm:mt-2 transition hover:bg-[#c9361c] disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {busy ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> {busyLabels[status]}
+                </>
+              ) : bookingFee !== null ? (
+                `Pay ₹${bookingFee.toLocaleString("en-IN")} & Book`
+              ) : (
+                "Book Now"
+              )}
+            </button>
           </div>
 
           {error && (
-            <p role="alert" className="mt-3 text-center text-xs font-semibold text-[#ff8a70]">
+            <p role="alert" className="mt-4 text-center text-xs font-semibold text-[#ff8a70]">
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={busy}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#e13e20] py-3.5 text-[13px] font-bold tracking-[.1em] text-white uppercase transition hover:bg-[#c9361c] disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {busy ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> {busyLabels[status]}
-              </>
-            ) : bookingFee !== null ? (
-              `Pay ₹${bookingFee.toLocaleString("en-IN")} & Book`
-            ) : (
-              "Book Your Appointment"
-            )}
-          </button>
           {bookingFee !== null && (
-            <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-white/55">
+            <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-white/55">
               <Lock className="h-3 w-3" /> Secure payment via Razorpay · ₹{bookingFee.toLocaleString("en-IN")} booking fee
             </p>
           )}

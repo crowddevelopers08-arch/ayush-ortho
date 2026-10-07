@@ -23,7 +23,7 @@ function VideoCard({
   const label = `${video.name} – ${video.concern}`;
 
   return (
-    <div className="relative mx-auto aspect-[9/16] w-full max-w-[320px] overflow-hidden rounded-[20px] sm:max-w-none bg-[#0d1a33] shadow-[0_16px_40px_rgba(0,0,0,.35)] ring-1 ring-white/10">
+    <div className="relative mx-auto aspect-[9/16] w-full max-w-[280px] overflow-hidden rounded-[22px] bg-[#0d1a33] shadow-[0_10px_24px_rgba(20,37,68,.22)] ring-1 ring-black/5 sm:max-w-[290px]">
       {playing ? (
         <video
           src={video.src}
@@ -58,39 +58,28 @@ function VideoCard({
   );
 }
 
-export default function VideoSection() {
-  // Only one video plays at a time; sliding away stops it.
+// Patient testimonial videos, one per slide. Only one plays at a time; sliding away stops it.
+export default function PatientVideoCarousel() {
   const [playingSrc, setPlayingSrc] = useState<string | null>(null);
   const stopPlayback = useCallback(() => setPlayingSrc(null), []);
 
   return (
-    <section className="bg-[#0d1a33] px-4 py-9 text-white sm:px-6 sm:py-16 lg:py-24">
-      <div className="mx-auto max-w-[1040px]">
-        <div className="text-center">
-          <span className="text-[13px] font-semibold tracking-[1.5px] text-[#ff8a70] uppercase">Patient Videos</span>
-          <h2 className="mt-3 text-[26px] leading-tight font-semibold sm:text-[34px] lg:text-[40px]">Hear From Our Patients</h2>
-        </div>
-
-        <div className="mt-6 sm:mt-12">
-          <Carousel
-            label="Patient videos"
-            tone="dark"
-            // One video per slide on phones, two on tablets, all three side by side on desktop.
-            slideClassName="basis-full sm:basis-1/2 lg:basis-1/3"
-            onSlideChange={stopPlayback}
-            paused={playingSrc !== null}
-            slides={patientVideos.map((video) => (
-              <VideoCard
-                key={video.src}
-                video={video}
-                playing={playingSrc === video.src}
-                onPlay={() => setPlayingSrc(video.src)}
-                onEnd={stopPlayback}
-              />
-            ))}
-          />
-        </div>
-      </div>
-    </section>
+    <Carousel
+      label="Patient videos"
+      controls="sides"
+      // Padding gives the card shadow room inside the carousel's clipped viewport.
+      slideClassName="basis-full py-6"
+      onSlideChange={stopPlayback}
+      paused={playingSrc !== null}
+      slides={patientVideos.map((video) => (
+        <VideoCard
+          key={video.src}
+          video={video}
+          playing={playingSrc === video.src}
+          onPlay={() => setPlayingSrc(video.src)}
+          onEnd={stopPlayback}
+        />
+      ))}
+    />
   );
 }

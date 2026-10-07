@@ -2,16 +2,6 @@ export const PRIMARY_PHONE = "+91 91500 10387";
 export const PRIMARY_PHONE_HREF = "tel:+919150010387";
 export const BOOKING_ANCHOR = "#book-appointment";
 export const LOGO_URL = "https://ik.imagekit.io/wwdlbhsjw/public/ayushhhhh.png";
-// Treatment photos rotated in the hero arch. `position` keeps the people in frame
-// when the wide photo is cropped to the tall arch.
-export const heroImages = [
-  // Only high-resolution originals (1480px+) here — the arch is ~540px tall, so
-  // smaller uploads look blurry on retina screens.
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/backban.webp?tr=h-1100,q-90", alt: "Man with neck and back pain", position: "40% center" },
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/kneww.jpeg?tr=h-1100,q-90", alt: "Patient holding a painful knee", position: "62% center" },
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/babbbb.jpg?tr=h-1100,q-80", alt: "Ayush Ortho clinic entrance", position: "45% center" },
-  { src: "https://ik.imagekit.io/wwdlbhsjw/public/mainbabb.jpg?tr=q-90", alt: "Senior with neck pain", position: "78% center" },
-];
 
 export const runningBarItems = [
   "Knee Pain",
