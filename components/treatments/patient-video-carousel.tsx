@@ -6,7 +6,7 @@ import { patientVideos } from "./data";
 
 // Each video gets up to this much playback before the next one comes forward.
 // It counts playback time, so pausing the video also pauses the rotation.
-const ROTATE_AFTER_SECONDS = 45;
+const ROTATE_AFTER_SECONDS = 35;
 
 // Where each card sits relative to the active one: in front, or tucked behind on either
 // side and tilted outwards. Rotation animates with the slide when a card moves.
@@ -34,7 +34,7 @@ const formatTime = (seconds: number) => {
 /**
  * Stacked patient-video carousel for the hero: the active video plays in front with
  * sound, the neighbours peek out behind it, and the next video comes forward after
- * 45s of playback (or when the video ends).
+ * 35s of playback (or when the video ends).
  */
 export default function PatientVideoCarousel() {
   const count = patientVideos.length;

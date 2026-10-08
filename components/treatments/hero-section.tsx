@@ -2,7 +2,7 @@ import { ArrowRight, CalendarCheck, CheckCircle2 } from "lucide-react";
 import { BOOKING_ANCHOR, LOGO_URL } from "./data";
 import PatientVideoCarousel from "./patient-video-carousel";
 
-const trustItems = ["5000+ Patients Treated", "More than 20,000+", "16+ Years of experience"];
+const trustItems = ["0+ Patients Treated", "More than 20,000+", "16+ Years of experience"];
 
 export default function HeroSection() {
   return (
