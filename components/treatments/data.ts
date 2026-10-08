@@ -118,20 +118,20 @@ const testimonialVideo = (version: string, path: string, name: string, concern: 
 
 export const patientVideos = [
   testimonialVideo(
-    "v1791283152",
-    "Ayush%20Orth/AQOfWmRoQSVhTpGwYyucQ9Y6BLTkj87vmKS4oyfPlL07m-ieND701zyjpopLdEohFLAezaN9pyR2JP9GfoREPG7EHJQZ20p6_1_tneeo9",
+    "v1791464879",
+    "testimonial_-_1-_v4l8rs",
     "P. Ramesh",
     "Knee Pain",
   ),
   testimonialVideo(
-    "v1791283153",
-    "Ayush%20Orth/AQPW563ZeJcbF3l_diS0rAzxsG12OdWSxuMqqDDVa_tA8F2fc4-Na2Z0qXXhPiWfY2BU61mesIRlJdhdKsilYbuE261CHZr1_uybuzy",
+    "v1791464879",
+    "testimonial_-_2_jso64y",
     "R. Vaishnavi",
     "Disc Bulge",
   ),
   testimonialVideo(
-    "v1791283153",
-    "Ayush%20Orth/AQOTskwMFe--MT8fFaAbCPCJIp_hAekVOyK1ebLLTx4ZfhkzZ3TFgfHFOxU9Co-bpDKxua91RIRd-XDDDOzgE6wVlU8NKcAs_f8e3ao",
+    "v1791464880",
+    "testimonila_sep_1_vwbpdi",
     "Kesavan",
     "Joint Pain",
   ),
