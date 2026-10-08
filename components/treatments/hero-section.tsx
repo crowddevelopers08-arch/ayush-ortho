@@ -23,7 +23,7 @@ export default function HeroSection() {
             sits between the paragraph and the buttons. On desktop the text and CTAs share the
             left column (the empty first/last rows centre them vertically) and the video spans
             the right column. */}
-        <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-[1fr_390px] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-x-10 lg:gap-y-0 xl:gap-x-12">
+        <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-[minmax(0,700px)_auto] lg:grid-rows-[1fr_auto_auto_1fr] lg:justify-center lg:gap-x-2 lg:gap-y-0 xl:gap-x-4">
           <div className="flex min-w-0 flex-col items-center text-center lg:col-start-1 lg:row-start-2 lg:items-start lg:text-left">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#e13e20]/30 bg-[#e13e20]/[.07] px-3.5 py-1.5">
               <span className="h-2 w-2 shrink-0 rounded-full bg-[#e13e20]" />
@@ -31,7 +31,7 @@ export default function HeroSection() {
             </div>
 
             <h1 className="text-[26px] leading-[1.18] font-extrabold text-[#142544] sm:text-[34px] md:text-[42px] lg:text-[50px] xl:text-[58px] 2xl:text-[64px]">
-              Ayush Ortho <span className="text-[#e13e20]">Integrated Treatment</span>
+              Multi <span className="text-[#e13e20]">Integrated Treatment</span>
               <span className="mt-2 block text-[15px] leading-snug font-semibold text-[#142544]/80 sm:text-lg lg:text-[22px] xl:text-2xl">
                 Ayurveda, Varma Therapy, Chiropractic Care and OMT
               </span>
