@@ -33,7 +33,7 @@ export default function HeroSection() {
             <h1 className="text-[26px] leading-[1.18] font-extrabold text-[#142544] sm:text-[34px] md:text-[42px] lg:text-[50px] xl:text-[58px] 2xl:text-[64px]">
               Multi <span className="text-[#e13e20]">Integrated Treatment</span>
               <span className="mt-2 block text-[15px] leading-snug font-semibold text-[#142544]/80 sm:text-lg lg:text-[22px] xl:text-2xl">
-                Ayurveda, Varma Therapy, Chiropractic Care and OMT
+                Homeopathy + Naturopathy + Ayurveda + Varma Therapy + Chiropractic Care and OMT
               </span>
             </h1>
 
