@@ -10,7 +10,7 @@ import BranchesFooter from "@/components/treatments/branches-footer"
 import MobileCtaBar from "@/components/treatments/mobile-cta-bar"
 
 export const metadata: Metadata = {
-  title: "#1 Ortho Clinic in Chennai | Ayush Ortho Integrated Treatment",
+  title: "#1 Ortho Clinic in Tamil Nadu | Ayush Ortho Integrated Treatment",
   description:
     "Ayush Ortho Integrated Treatment - Ayurveda, Varma Therapy, Chiropractic Care and OMT. Get personalised integrated care for knee, back, neck, shoulder and other musculoskeletal concerns.",
 }
