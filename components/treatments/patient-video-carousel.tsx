@@ -39,15 +39,22 @@ const formatTime = (seconds: number) => {
 export default function PatientVideoCarousel() {
   const count = patientVideos.length;
   const [active, setActive] = useState(0);
+  // Sound is on by default. Each video first tries to play unmuted; only if the
+  // browser refuses (it does for visitors who haven't tapped the page yet) does it
+  // fall back to muted playback with a "Tap for sound" badge.
   const [muted, setMuted] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
-  // True when the browser refused unmuted autoplay and we fell back to muted.
-  // The ref is read inside event listeners; the state drives the "Tap for sound" badge.
+  // True while the video is muted only because the browser hasn't allowed sound yet
+  // (not because the visitor chose mute). Read inside event listeners.
   const forcedMute = useRef(false);
+  // Drives the "Tap for sound" badge once we know the browser won't allow sound yet.
   const [soundBlocked, setSoundBlocked] = useState(false);
+  // A tap that turns the sound on shouldn't also pause the video, so ignore
+  // play/pause toggles for a moment afterwards.
+  const ignoreToggleUntil = useRef(0);
 
   const goTo = useCallback(
     (index: number) => {
@@ -58,8 +65,26 @@ export default function PatientVideoCarousel() {
     [count],
   );
 
-  // Start each new video with sound. Browsers block unmuted autoplay until the visitor
-  // has interacted with the page; if blocked, play muted instead.
+  // Switch the sound on. If the browser still refuses (it pauses or rejects unmuted
+  // playback), fall back to muted playback and show the badge.
+  const enableSound = useCallback(() => {
+    const video = videoRef.current;
+    forcedMute.current = false;
+    setSoundBlocked(false);
+    setMuted(false);
+    if (!video) return;
+    video.muted = false;
+    video.play().catch(() => {
+      forcedMute.current = true;
+      setSoundBlocked(true);
+      setMuted(true);
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+  }, []);
+
+  // Start each new video with the current sound setting. Once the visitor has tapped
+  // the page, browsers allow later videos to play with sound.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -68,43 +93,34 @@ export default function PatientVideoCarousel() {
     setPlaying(!video.paused);
     if (video.readyState >= 1 && Number.isFinite(video.duration)) setDuration(video.duration);
     video.play().catch(() => {
+      if (video.muted) return setPlaying(false);
       forcedMute.current = true;
       setSoundBlocked(true);
-      video.muted = true;
       setMuted(true);
+      video.muted = true;
       video.play().catch(() => setPlaying(false));
     });
-    // Only on a new video; mute toggles are handled by the button.
+    // Only on a new video; mute toggles are handled by the buttons.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
-  // Turn the sound on at the visitor's next interaction if we had to start muted.
+  // Otherwise turn the sound on at the visitor's first tap, click or key press anywhere.
   // Listen for pointerup, not pointerdown: on phones the browser only counts a tap as
-  // permission when the finger lifts, and unmuting earlier makes mobile browsers pause
-  // the video. That same tap shouldn't also pause the video or flip the mute button
-  // back off, so ignore play/pause toggles for a moment afterwards.
-  const ignoreToggleUntil = useRef(0);
+  // permission when the finger lifts.
   useEffect(() => {
-    const unmute = (e: Event) => {
+    const onInteract = (e: Event) => {
       if (!forcedMute.current) return;
       if (e.target instanceof Element && e.target.closest("[data-mute-toggle]")) return;
-      forcedMute.current = false;
-      setSoundBlocked(false);
-      const video = videoRef.current;
-      if (video) {
-        video.muted = false;
-        if (video.paused) video.play().catch(() => {});
-      }
-      setMuted(false);
       ignoreToggleUntil.current = Date.now() + 1000;
+      enableSound();
     };
-    window.addEventListener("pointerup", unmute);
-    window.addEventListener("keydown", unmute);
+    window.addEventListener("pointerup", onInteract);
+    window.addEventListener("keydown", onInteract);
     return () => {
-      window.removeEventListener("pointerup", unmute);
-      window.removeEventListener("keydown", unmute);
+      window.removeEventListener("pointerup", onInteract);
+      window.removeEventListener("keydown", onInteract);
     };
-  }, []);
+  }, [enableSound]);
 
   const togglePlay = () => {
     const video = videoRef.current;
@@ -114,12 +130,12 @@ export default function PatientVideoCarousel() {
   };
 
   const toggleMute = () => {
+    if (muted) return enableSound();
     const video = videoRef.current;
     forcedMute.current = false;
     setSoundBlocked(false);
-    const next = !muted;
-    if (video) video.muted = next;
-    setMuted(next);
+    if (video) video.muted = true;
+    setMuted(true);
   };
 
   const seek = (seconds: number) => {
@@ -151,7 +167,6 @@ export default function PatientVideoCarousel() {
                     src={video.src}
                     poster={video.poster}
                     title={`Patient video: ${label}`}
-                    autoPlay
                     playsInline
                     preload="metadata"
                     onPlay={() => setPlaying(true)}
