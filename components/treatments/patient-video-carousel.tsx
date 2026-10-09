@@ -45,7 +45,9 @@ export default function PatientVideoCarousel() {
   const [duration, setDuration] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   // True when the browser refused unmuted autoplay and we fell back to muted.
+  // The ref is read inside event listeners; the state drives the "Tap for sound" badge.
   const forcedMute = useRef(false);
+  const [soundBlocked, setSoundBlocked] = useState(false);
 
   const goTo = useCallback(
     (index: number) => {
@@ -67,6 +69,7 @@ export default function PatientVideoCarousel() {
     if (video.readyState >= 1 && Number.isFinite(video.duration)) setDuration(video.duration);
     video.play().catch(() => {
       forcedMute.current = true;
+      setSoundBlocked(true);
       video.muted = true;
       setMuted(true);
       video.play().catch(() => setPlaying(false));
@@ -76,23 +79,29 @@ export default function PatientVideoCarousel() {
   }, [active]);
 
   // Turn the sound on at the visitor's next interaction if we had to start muted.
-  // That same tap shouldn't also pause the video or flip the mute button back off.
-  // Clicks land after the pointer is released, so ignore toggles for a short window.
+  // Listen for pointerup, not pointerdown: on phones the browser only counts a tap as
+  // permission when the finger lifts, and unmuting earlier makes mobile browsers pause
+  // the video. That same tap shouldn't also pause the video or flip the mute button
+  // back off, so ignore play/pause toggles for a moment afterwards.
   const ignoreToggleUntil = useRef(0);
   useEffect(() => {
     const unmute = (e: Event) => {
       if (!forcedMute.current) return;
       if (e.target instanceof Element && e.target.closest("[data-mute-toggle]")) return;
       forcedMute.current = false;
+      setSoundBlocked(false);
       const video = videoRef.current;
-      if (video) video.muted = false;
+      if (video) {
+        video.muted = false;
+        if (video.paused) video.play().catch(() => {});
+      }
       setMuted(false);
       ignoreToggleUntil.current = Date.now() + 1000;
     };
-    window.addEventListener("pointerdown", unmute);
+    window.addEventListener("pointerup", unmute);
     window.addEventListener("keydown", unmute);
     return () => {
-      window.removeEventListener("pointerdown", unmute);
+      window.removeEventListener("pointerup", unmute);
       window.removeEventListener("keydown", unmute);
     };
   }, []);
@@ -107,6 +116,7 @@ export default function PatientVideoCarousel() {
   const toggleMute = () => {
     const video = videoRef.current;
     forcedMute.current = false;
+    setSoundBlocked(false);
     const next = !muted;
     if (video) video.muted = next;
     setMuted(next);
@@ -161,6 +171,17 @@ export default function PatientVideoCarousel() {
                     onClick={togglePlay}
                     className="absolute inset-0 h-full w-full cursor-pointer bg-black object-cover"
                   />
+
+                  {soundBlocked && (
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      data-mute-toggle
+                      className="absolute top-3 left-1/2 inline-flex -translate-x-1/2 animate-pulse items-center gap-1.5 rounded-full bg-[#e13e20] px-3.5 py-2 text-xs font-semibold whitespace-nowrap text-white shadow-lg"
+                    >
+                      <VolumeX className="h-4 w-4" /> Tap for sound
+                    </button>
+                  )}
 
                   {!playing && (
                     <button
