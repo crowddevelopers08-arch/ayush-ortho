@@ -176,6 +176,7 @@ export default function LeadsTable({
       'neck-shoulder': { label: "Neck & Shoulder", color: "bg-green-100 text-green-800 border-green-200" },
       'knee-pain': { label: "Knee Pain", color: "bg-purple-100 text-purple-800 border-purple-200" },
       'influecners-leads': { label: "Influencer Leads", color: "bg-orange-100 text-orange-800 border-orange-200" },
+      'pain': { label: "Pain Page", color: "bg-rose-100 text-rose-800 border-rose-200" },
       'default': { label: formName, color: "bg-gray-100 text-gray-800 border-gray-200" }
     }
     
@@ -343,6 +344,7 @@ export default function LeadsTable({
                          formName === 'neck-shoulder' ? 'Neck & Shoulder' : 
                          formName === 'knee-pain' ? 'Knee Pain' : 
                          formName === 'influecners-leads' ? 'Influencer Leads' :
+                         formName === 'pain' ? 'Pain Page' :
                          formName === 'common' ? 'Common' : 
                          formName === 'Unknown' ? 'Unknown Form' : formName}
                       </span>
@@ -423,6 +425,7 @@ export default function LeadsTable({
                      formName === 'neck-shoulder' ? 'Neck & Shoulder' : 
                      formName === 'knee-pain' ? 'Knee Pain' : 
                      formName === 'influecners-leads' ? 'Influencer Leads' :
+                         formName === 'pain' ? 'Pain Page' :
                      formName === 'common' ? 'Common' : formName}
                   </SelectItem>
                 ))}
