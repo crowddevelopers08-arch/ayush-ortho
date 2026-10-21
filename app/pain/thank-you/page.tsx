@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Script from "next/script"
 import ThankYouContent from "@/components/pain/thank-you-content"
 import BranchesFooter from "@/components/pain/branches-footer"
 
@@ -12,6 +13,9 @@ export const metadata: Metadata = {
 export default function PainThankYouPage() {
   return (
     <div className="font-['Outfit',sans-serif]">
+      <Script id="pain-purchase-event" strategy="lazyOnload">
+        {`fbq('track', 'Purchase');`}
+      </Script>
       <ThankYouContent />
       <BranchesFooter />
     </div>
